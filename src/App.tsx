@@ -1,5 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import {
+  SiTypescript, SiJavascript, SiHtml5, SiCss, SiAngular, SiIonic, SiReactivex,
+  SiSqlite, SiMongodb, SiGit, SiGitlab, SiPostman, SiFigma, SiJira,
+  SiCplusplus, SiPython, SiGnubash, SiReact, SiGithub, SiFirebase, SiLinux
+} from 'react-icons/si';
+import { FaAws, FaJava } from 'react-icons/fa';
 import {
   Settings,
   Terminal,
@@ -25,118 +31,269 @@ import cityImage from './assets/city.png';
 import buildingImage from './assets/building.png';
 import office1Image from './assets/office1.png';
 import office2Image from './assets/office2.png';
-
+import muskanImage from './assets/Muskan.jpg';
 type Section = 'MISSION_LOG' | 'DISTRICT_01' | 'SECTOR_X' | 'INTEL';
+
+function CyberpunkCursor() {
+  const dotRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const [isLocked, setIsLocked] = useState(false);
+
+  useEffect(() => {
+    let ringX = 0, ringY = 0;
+    let mouseX = 0, mouseY = 0;
+    let rafId: number;
+
+    const onMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate(${mouseX - 4}px, ${mouseY - 4}px)`;
+      }
+      const el = e.target as HTMLElement;
+      const clickable =
+        el.closest('button, a, [role="button"], input, select, textarea, label') !== null ||
+        window.getComputedStyle(el).cursor === 'pointer';
+      setIsLocked(clickable);
+    };
+
+    const animate = () => {
+      ringX += (mouseX - ringX) * 0.12;
+      ringY += (mouseY - ringY) * 0.12;
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate(${ringX - 20}px, ${ringY - 20}px)`;
+      }
+      rafId = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener('mousemove', onMove);
+    rafId = requestAnimationFrame(animate);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  return (
+    <>
+      {/* Inner dot — hollow ring on lock */}
+      <div
+        ref={dotRef}
+        className="fixed top-0 left-0 z-[9999] pointer-events-none rounded-full transition-all duration-150"
+        style={{
+          willChange: 'transform',
+          width: isLocked ? '10px' : '8px',
+          height: isLocked ? '10px' : '8px',
+          background: isLocked ? 'transparent' : '#ff8400',
+          border: isLocked ? '2px solid #ff8400' : 'none',
+          boxShadow: '0 0 10px #ff8400, 0 0 20px #ff8400, 0 0 30px #ff8400',
+        }}
+      />
+      {/* Outer crosshair */}
+      <div
+        ref={ringRef}
+        className="fixed top-0 left-0 z-[9999] pointer-events-none"
+        style={{
+          willChange: 'transform',
+          width: '40px',
+          height: '40px',
+          filter: isLocked
+            ? 'drop-shadow(0 0 6px #ff2020) drop-shadow(0 0 18px rgba(255,32,32,0.7))'
+            : 'drop-shadow(0 0 4px rgba(255,132,0,0.8)) drop-shadow(0 0 12px rgba(255,132,0,0.4))',
+          transition: 'filter 0.15s ease',
+        }}
+      >
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          {isLocked ? (
+            <>
+              {/* Outer glow circle */}
+              <circle cx="20" cy="20" r="18" stroke="#ff2020" strokeWidth="1.5" fill="rgba(255,32,32,0.06)" />
+              {/* Crosshair lines with center gap */}
+              <line x1="20" y1="2" x2="20" y2="14" stroke="#ff2020" strokeWidth="1.5" />
+              <line x1="20" y1="26" x2="20" y2="38" stroke="#ff2020" strokeWidth="1.5" />
+              <line x1="2" y1="20" x2="14" y2="20" stroke="#ff2020" strokeWidth="1.5" />
+              <line x1="26" y1="20" x2="38" y2="20" stroke="#ff2020" strokeWidth="1.5" />
+              {/* Center dot */}
+              <circle cx="20" cy="20" r="2.5" fill="#ff2020" />
+            </>
+          ) : (
+            <>
+              <line x1="0" y1="8" x2="0" y2="0" stroke="#ff8400" strokeWidth="2" strokeLinecap="square" />
+              <line x1="0" y1="0" x2="8" y2="0" stroke="#ff8400" strokeWidth="2" strokeLinecap="square" />
+              <line x1="32" y1="0" x2="40" y2="0" stroke="#ff8400" strokeWidth="2" strokeLinecap="square" />
+              <line x1="40" y1="0" x2="40" y2="8" stroke="#ff8400" strokeWidth="2" strokeLinecap="square" />
+              <line x1="40" y1="32" x2="40" y2="40" stroke="#ff8400" strokeWidth="2" strokeLinecap="square" />
+              <line x1="40" y1="40" x2="32" y2="40" stroke="#ff8400" strokeWidth="2" strokeLinecap="square" />
+              <line x1="8" y1="40" x2="0" y2="40" stroke="#ff8400" strokeWidth="2" strokeLinecap="square" />
+              <line x1="0" y1="40" x2="0" y2="32" stroke="#ff8400" strokeWidth="2" strokeLinecap="square" />
+              <line x1="20" y1="14" x2="20" y2="26" stroke="#ff8400" strokeWidth="1" strokeDasharray="2 2" opacity="0.4" />
+              <line x1="14" y1="20" x2="26" y2="20" stroke="#ff8400" strokeWidth="1" strokeDasharray="2 2" opacity="0.4" />
+            </>
+          )}
+        </svg>
+
+      </div>
+    </>
+  );
+}
+
+function CyberTransition({ active }: { active: boolean }) {
+  if (!active) return null;
+  return (
+    <div className="cyber-transition-overlay">
+      <div className="glitch-layer" />
+      <div className="noise-layer" />
+      <div className="scan-bar" />
+      <div className="hud-text">NEURAL_LINK_ESTABLISHED...</div>
+    </div>
+  );
+}
 
 export default function App() {
   const [activeSection, setActiveSection] = useState<Section>('MISSION_LOG');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const navigateTo = (section: Section) => {
+    if (isTransitioning || activeSection === section) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setActiveSection(section);
+      setTimeout(() => setIsTransitioning(false), 400);
+    }, 500);
+  };
+
+  const handleDive = () => navigateTo('DISTRICT_01');
 
   return (
-    <div className="relative min-h-screen bg-background text-on-surface font-body overflow-x-hidden">
+    <div className="relative min-h-screen bg-background text-on-surface font-body overflow-x-hidden cursor-none">
+      <CyberpunkCursor />
+      <CyberTransition active={isTransitioning} />
       {/* Global Scanline Overlay */}
       <div className="fixed inset-0 z-[100] scanline-overlay opacity-30 pointer-events-none" />
 
-      {/* Top Navigation Bar */}
-      <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-black/40 backdrop-blur-xl border-b border-primary/20 shadow-[0_4px_20px_rgba(0,240,255,0.1)]">
-        <div className="text-xl font-black tracking-tighter text-primary font-headline uppercase italic drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]">
-          SYSTEM_CORE_V1.0
-        </div>
-
-        <div className="hidden md:flex items-center gap-8 h-full">
-          {(['MISSION_LOG', 'DISTRICT_01', 'SECTOR_X', 'INTEL'] as Section[]).map((section) => (
-            <button
-              key={section}
-              onClick={() => setActiveSection(section)}
-              className={cn(
-                "font-headline uppercase tracking-tighter font-bold transition-all duration-300 pb-1 border-b-2",
-                activeSection === section
-                  ? "text-primary border-primary"
-                  : "text-primary/40 border-transparent hover:text-primary/80"
-              )}
-            >
-              {section}
-            </button>
-          ))}
-        </div>
-
+      {/* Top System Header */}
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-12 bg-black/60 backdrop-blur-md border-b border-primary/20">
         <div className="flex items-center gap-4">
-          <button className="p-2 text-primary hover:bg-primary/10 transition-colors">
-            <Settings className="w-5 h-5" />
-          </button>
-          <button className="p-2 text-primary hover:bg-primary/10 transition-colors">
-            <Terminal className="w-5 h-5" />
-          </button>
+          <div className="flex gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-red-500/50" />
+            <div className="w-2 h-2 rounded-full bg-yellow-500/50" />
+            <div className="w-2 h-2 rounded-full bg-green-500/50" />
+          </div>
+          <div className="text-[10px] font-black tracking-[0.2em] text-primary/80 font-headline uppercase italic">
+            SYSTEM_OS.EXE // <span className="opacity-50 font-medium">V4.0.2</span>
+          </div>
+          <div className="hidden md:flex items-center gap-3 ml-4 pl-4 border-l border-primary/10">
+            <Activity className="w-3 h-3 text-primary/40" />
+            <div className="w-16 h-1 bg-primary/10 rounded-full overflow-hidden">
+              <div className="w-2/3 h-full bg-primary/40 animate-pulse" />
+            </div>
+          </div>
         </div>
-      </nav>
+
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
+          <Terminal className="w-4 h-4 text-primary animate-pulse" />
+          <h2 className="font-headline text-xs font-bold text-primary tracking-[0.4em] uppercase">
+            {activeSection.replace('_', ' ')}
+          </h2>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <div className="hidden lg:flex flex-col items-end">
+            <span className="text-[8px] font-label text-primary/40 leading-none">CORE_TEMP</span>
+            <span className="text-[10px] font-headline text-primary font-bold leading-none">32°C</span>
+          </div>
+          <div className="h-6 w-px bg-primary/20" />
+          <div className="flex gap-3">
+            <Settings className="w-4 h-4 text-primary/60 hover:text-primary cursor-pointer transition-colors" />
+            <Power className="w-4 h-4 text-red-500/60 hover:text-red-500 cursor-pointer transition-colors" />
+          </div>
+        </div>
+      </header>
 
       {/* Side Navigation Bar */}
       <aside
         onMouseEnter={() => setIsSidebarOpen(true)}
         onMouseLeave={() => setIsSidebarOpen(false)}
         className={cn(
-          "fixed left-0 top-16 h-[calc(100vh-64px)] z-40 flex flex-col items-center py-8 bg-surface-container-low/80 backdrop-blur-md border-r border-primary/20 transition-all duration-300 ease-in-out",
+          "fixed left-0 top-12 h-[calc(100vh-48px)] z-40 flex flex-col bg-surface-container-low/80 backdrop-blur-md border-r border-primary/20 transition-all duration-500 ease-in-out overflow-hidden",
           isSidebarOpen ? "w-64" : "w-20"
         )}
       >
         <div className={cn(
-          "flex flex-col w-full space-y-1 mb-8 px-6 transition-opacity duration-300",
-          isSidebarOpen ? "opacity-100" : "opacity-0"
+          "flex flex-col w-full h-20 justify-center px-6 transition-all duration-500 whitespace-nowrap",
+          isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 pointer-events-none"
         )}>
           <div className="text-lg font-bold text-primary font-headline uppercase tracking-tight">DISTRICT_OVERLAY</div>
           <div className="text-[10px] uppercase tracking-widest text-primary/60 font-headline">SECTOR: NEURAL_CORE</div>
         </div>
 
-        <div className="flex flex-col w-full space-y-2">
+        <div className="flex flex-col w-full flex-grow py-4">
           <SidebarItem
             icon={<Home className="w-5 h-5" />}
             label="Home"
             active={activeSection === 'MISSION_LOG'}
             isOpen={isSidebarOpen}
-            onClick={() => setActiveSection('MISSION_LOG')}
+            onClick={() => navigateTo('MISSION_LOG')}
           />
           <SidebarItem
             icon={<Fingerprint className="w-5 h-5" />}
             label="About"
             active={activeSection === 'DISTRICT_01'}
             isOpen={isSidebarOpen}
-            onClick={() => setActiveSection('DISTRICT_01')}
+            onClick={() => navigateTo('DISTRICT_01')}
           />
           <SidebarItem
             icon={<GitBranch className="w-5 h-5" />}
             label="Projects"
             active={activeSection === 'SECTOR_X'}
             isOpen={isSidebarOpen}
-            onClick={() => setActiveSection('SECTOR_X')}
+            onClick={() => navigateTo('SECTOR_X')}
           />
           <SidebarItem
             icon={<Network className="w-5 h-5" />}
             label="Experience"
             active={activeSection === 'INTEL'}
             isOpen={isSidebarOpen}
-            onClick={() => setActiveSection('INTEL')}
+            onClick={() => navigateTo('INTEL')}
           />
         </div>
 
-        <div className="mt-auto w-full flex flex-col items-center space-y-4 mb-6">
-          <button className={cn(
-            "bg-primary text-background font-headline text-[10px] font-bold py-2 px-4 uppercase tracking-tighter notch-tr transition-all hover:brightness-110",
-            isSidebarOpen ? "block" : "hidden"
-          )}>
-            DEPLOY_HUD
-          </button>
-          <div className="flex items-center px-6 py-3 text-primary/40 hover:bg-primary/5 hover:text-primary transition-all cursor-pointer w-full">
-            <Sliders className="w-5 h-5" />
-            <span className={cn("ml-4 font-headline text-xs uppercase tracking-widest transition-opacity", isSidebarOpen ? "block" : "hidden")}>SETTINGS</span>
+        <div className="mt-auto w-full flex flex-col py-6">
+          {/* DEPLOY_HUD BUTTON (COMMENTED_OUT)
+          <div className="px-5 mb-4">
+            <button className={cn(
+              "w-full bg-primary text-background font-headline text-[10px] font-bold py-3 uppercase tracking-widest notch-tr transition-all duration-500 hover:brightness-110 whitespace-nowrap overflow-hidden",
+              isSidebarOpen ? "opacity-100 scale-100" : "opacity-0 scale-90 pointer-events-none"
+            )}>
+              {isSidebarOpen ? "DEPLOY_HUD" : ""}
+            </button>
           </div>
+          */}
+
+          {/* SETTINGS LINK (COMMENTED_OUT)
+          <div 
+            className="flex items-center h-12 text-primary/40 hover:bg-primary/10 hover:text-primary transition-all cursor-pointer group"
+          >
+            <div className="w-20 flex items-center justify-center flex-shrink-0">
+              <Sliders className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500 text-primary" />
+            </div>
+            <span className={cn(
+              "font-headline text-xs uppercase tracking-widest transition-all duration-500 whitespace-nowrap",
+              isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+            )}>
+              SETTINGS
+            </span>
+          </div>
+          */}
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className="ml-20 pt-16 min-h-screen relative overflow-hidden">
+      <main className="ml-20 pt-12 min-h-screen relative overflow-hidden">
         <AnimatePresence mode="wait">
-          {activeSection === 'MISSION_LOG' && <HeroSection key="hero" />}
+          {activeSection === 'MISSION_LOG' && <HeroSection key="hero" onDive={handleDive} />}
           {activeSection === 'DISTRICT_01' && <AboutSection key="about" />}
           {activeSection === 'SECTOR_X' && <ProjectsSection key="projects" />}
           {activeSection === 'INTEL' && <ExperienceSection key="experience" onOpenContact={() => setIsContactModalOpen(true)} />}
@@ -144,13 +301,13 @@ export default function App() {
       </main>
 
       {/* Global Footer */}
-      <footer className="fixed bottom-0 w-full z-50 flex justify-between items-center px-4 py-1 h-8 bg-black border-t border-tertiary/30">
-        <div className="font-headline text-[10px] tracking-[0.2em] font-medium text-tertiary animate-pulse">
+      <footer className="fixed bottom-0 w-full z-50 flex justify-between items-center px-4 py-1 h-8 bg-black border-t border-secondary/30">
+        <div className="font-headline text-[10px] tracking-[0.2em] font-medium text-secondary animate-pulse">
           SYS_AUTH: NEURAL_OVERRIDE_V2.0.4 | LATENCY: 12ms | ENC: AES-256 | SCANNING_DISTRICTS...
         </div>
         <div className="flex gap-6">
-          <button className="font-headline text-[10px] tracking-[0.2em] font-medium text-tertiary/50 hover:text-on-surface transition-colors">SYS_INFO</button>
-          <button className="font-headline text-[10px] tracking-[0.2em] font-medium text-tertiary/50 hover:text-on-surface transition-colors">REBOOT</button>
+          <button className="font-headline text-[10px] tracking-[0.2em] font-medium text-secondary/50 hover:text-on-surface transition-colors">SYS_INFO</button>
+          <button className="font-headline text-[10px] tracking-[0.2em] font-medium text-secondary/50 hover:text-on-surface transition-colors">REBOOT</button>
         </div>
       </footer>
 
@@ -164,18 +321,27 @@ export default function App() {
 function SidebarItem({ icon, label, active, isOpen, onClick }: { icon: React.ReactNode, label: string, active: boolean, isOpen: boolean, onClick: () => void }) {
   return (
     <div
+      role="button"
       onClick={onClick}
       className={cn(
-        "flex items-center px-6 py-3 transition-all cursor-pointer border-l-4",
+        "flex items-center h-14 transition-all duration-300 border-l-4 group relative overflow-hidden",
         active
-          ? "bg-primary/20 text-primary border-primary"
-          : "text-primary/40 border-transparent hover:bg-primary/5 hover:text-primary"
+          ? "bg-primary/15 text-primary border-primary shadow-[inset_10px_0_15px_-10px_rgba(0,240,255,0.2)]"
+          : "text-primary/40 border-transparent hover:bg-primary/5 hover:text-primary hover:border-primary/20"
       )}
     >
-      {icon}
+      <div className="w-20 flex items-center justify-center flex-shrink-0">
+        <div className={cn(
+          "transition-transform duration-500",
+          isOpen ? "scale-110" : "scale-100",
+          active && "scale-110 drop-shadow-[0_0_8px_rgba(0,240,255,0.4)]"
+        )}>
+          {icon}
+        </div>
+      </div>
       <span className={cn(
-        "ml-4 font-headline text-xs uppercase tracking-widest transition-opacity duration-300",
-        isOpen ? "opacity-100" : "opacity-0 hidden"
+        "font-headline text-xs font-bold uppercase tracking-widest transition-all duration-500 whitespace-nowrap",
+        isOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 pointer-events-none"
       )}>
         {label}
       </span>
@@ -183,7 +349,7 @@ function SidebarItem({ icon, label, active, isOpen, onClick }: { icon: React.Rea
   );
 }
 
-function HeroSection() {
+function HeroSection({ onDive }: { onDive: () => void }) {
   return (
     <motion.section
       initial={{ opacity: 0 }}
@@ -209,7 +375,7 @@ function HeroSection() {
           transition={{ delay: 0.2 }}
           className="mb-2"
         >
-          <span className="font-label text-primary tracking-[0.5em] text-[10px] font-bold uppercase opacity-80">ESTABLISHING_NEURAL_LINK...</span>
+          <span className="font-mono text-primary tracking-[0.4em] text-[11px] font-bold uppercase opacity-70">// ESTABLISHING_NEURAL_LINK</span>
         </motion.div>
 
         <motion.h1
@@ -227,23 +393,40 @@ function HeroSection() {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-4 font-headline text-2xl md:text-4xl text-tertiary font-bold tracking-widest uppercase text-glow-magenta"
+          className="mt-3 font-headline text-xl md:text-3xl text-tertiary font-bold tracking-[0.3em] uppercase text-glow-magenta"
         >
-          SOFTWARE ENGINEER
+          FRONTEND ENGINEER
         </motion.h2>
 
         <motion.div
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="mt-12 flex flex-col md:flex-row gap-6"
+          className="mt-12 flex flex-col md:flex-row gap-6 justify-center"
         >
-          <button className="bg-primary-container text-on-primary-container font-headline font-bold text-lg px-12 py-4 shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:scale-105 transition-transform">
-            INITIATE_DIVE
+          <button onClick={onDive} className="btn-cyberpunk relative bg-primary-container text-on-primary-container font-headline font-bold text-lg px-12 py-4 shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:shadow-[0_0_40px_rgba(0,240,255,0.6)] hover:brightness-110 transition-all duration-200 group uppercase tracking-widest">
+            {/* Glitch layers */}
+            <span
+              className="glitch-layer-1 absolute inset-0 flex items-center justify-center font-headline font-bold text-lg tracking-widest select-none opacity-0 group-hover:opacity-100"
+              aria-hidden="true"
+              style={{ color: 'transparent', textShadow: '-3px 0 rgba(60,60,60,0.9)' }}
+            >
+              INITIATE_DIVE
+            </span>
+            <span
+              className="glitch-layer-2 absolute inset-0 flex items-center justify-center font-headline font-bold text-lg tracking-widest select-none opacity-0 group-hover:opacity-100"
+              aria-hidden="true"
+              style={{ color: 'transparent', textShadow: '3px 0 rgba(100,100,100,0.7)' }}
+            >
+              INITIATE_DIVE
+            </span>
+            <span className="relative z-10">INITIATE_DIVE</span>
           </button>
+          {/* VIEW_ARCHIVES BUTTON (COMMENTED_OUT)
           <button className="border border-tertiary text-tertiary font-headline font-bold text-lg px-12 py-4 hover:bg-tertiary/10 transition-colors uppercase">
             VIEW_ARCHIVES
           </button>
+          */}
         </motion.div>
       </div>
 
@@ -251,12 +434,12 @@ function HeroSection() {
       <div className="absolute left-6 md:left-24 bottom-16 md:bottom-24 z-20 glass-panel p-4 border-l-2 border-primary-container">
         <div className="flex flex-col gap-3">
           <div className="space-y-1">
-            <div className="font-label text-[10px] text-primary/60 uppercase">Altitude</div>
-            <div className="font-headline text-xl font-bold text-primary">1,248M</div>
+            <div className="font-mono text-[10px] text-primary/50 uppercase tracking-widest">Altitude</div>
+            <div className="font-headline text-lg font-bold text-primary tracking-wider">1,248M</div>
           </div>
           <div className="space-y-1">
-            <div className="font-label text-[10px] text-primary/60 uppercase">Velocity</div>
-            <div className="font-headline text-xl font-bold text-primary">Mach 1.28</div>
+            <div className="font-mono text-[10px] text-primary/50 uppercase tracking-widest">Velocity</div>
+            <div className="font-headline text-lg font-bold text-primary tracking-wider">Mach 1.28</div>
           </div>
           <div className="mt-2 flex gap-1">
             <div className="h-1 w-8 bg-primary"></div>
@@ -269,12 +452,12 @@ function HeroSection() {
 
       <div className="absolute right-6 md:right-12 bottom-16 md:bottom-24 z-20 flex flex-col items-end gap-4 text-right">
         <div className="glass-panel p-4 border-r-2 border-tertiary">
-          <div className="font-label text-[10px] text-tertiary/60 uppercase">Mission Status</div>
-          <div className="font-headline text-lg font-bold text-tertiary">SYNC_STABLE: 98%</div>
+          <div className="font-mono text-[10px] text-tertiary/50 uppercase tracking-widest">Mission Status</div>
+          <div className="font-headline text-base font-bold text-tertiary tracking-wider">SYNC_STABLE: 98%</div>
         </div>
         <div className="glass-panel p-4 border-r-2 border-secondary">
-          <div className="font-label text-[10px] text-secondary/60 uppercase">Sector Location</div>
-          <div className="font-headline text-lg font-bold text-secondary">DISTRICT_01_CORE</div>
+          <div className="font-mono text-[10px] text-secondary/50 uppercase tracking-widest">Sector Location</div>
+          <div className="font-headline text-base font-bold text-secondary tracking-wider">DISTRICT_01_CORE</div>
         </div>
       </div>
 
@@ -305,12 +488,12 @@ function AboutSection() {
 
       <div className="max-w-7xl mx-auto relative z-10 p-8 md:p-12">
         <div className="mb-12 border-l-4 border-primary pl-6">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-white mb-2 uppercase text-glow-cyan">
+          <h1 className="font-headline text-4xl md:text-5xl font-black tracking-tight text-white mb-3 uppercase text-glow-cyan">
             SECTOR_X: <span className="text-primary italic">NEURAL PROFILE</span>
           </h1>
           <div className="flex items-center gap-4">
-            <span className="bg-secondary/20 text-secondary px-3 py-1 text-[10px] tracking-widest uppercase font-bold border border-secondary/30">STATUS: OPERATIONAL</span>
-            <span className="text-outline text-[10px] tracking-widest uppercase font-mono">ID: MSK_9901_BRAVO</span>
+            <span className="bg-secondary/20 text-secondary px-3 py-1 text-[11px] tracking-widest uppercase font-bold font-mono border border-secondary/30">STATUS: OPERATIONAL</span>
+            <span className="text-outline text-[11px] tracking-widest uppercase font-mono">ID: MSK_9901_BRAVO</span>
           </div>
         </div>
 
@@ -320,14 +503,14 @@ function AboutSection() {
             <div className="bg-surface-container-low backdrop-blur-md p-1 border-l-4 border-primary shadow-glow-cyan">
               <div className="bg-surface-container-high p-6 relative overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1976&auto=format&fit=crop"
+                  src={muskanImage}
                   className="w-full aspect-square object-cover mix-blend-luminosity brightness-110 mb-6 border border-primary/20"
                   alt="Muskan Profile"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute top-4 right-4 bg-primary/20 px-2 py-1 text-[10px] text-primary border border-primary/40 backdrop-blur-md font-mono">LIVE_FEED</div>
-                <h2 className="text-2xl font-bold uppercase mb-1 tracking-wider text-white italic">MUSKAN</h2>
-                <p className="text-sm text-primary/80 mb-6 leading-relaxed uppercase font-mono tracking-wider">Full-Stack Pilot / Structural Architect</p>
+                <h2 className="font-headline text-xl font-bold uppercase mb-1 tracking-wider text-white italic">MUSKAN</h2>
+                <p className="font-mono text-[11px] text-primary/70 mb-6 leading-relaxed uppercase tracking-widest">Frontend Engineer / MapMyIndia</p>
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-[10px] uppercase tracking-widest text-secondary">
@@ -346,9 +529,9 @@ function AboutSection() {
             </div>
 
             <div className="bg-surface-container-low backdrop-blur-md p-6 border-t border-primary/10">
-              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-outline mb-4">LOG.01: MISSION_STATEMENT</h3>
-              <p className="text-sm leading-relaxed text-on-surface/80 font-light">
-                Engineering digital landscapes where high-performance backends meet intuitive neural interfaces. Currently focused on building autonomous architectural frameworks that scale beyond standard terrestrial limits.
+              <h3 className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-outline mb-4">// LOG.01_MISSION_STATEMENT</h3>
+              <p className="font-body text-sm leading-relaxed text-on-surface/75">
+                Frontend Engineer with 2+ years of experience building enterprise-grade fleet and transit platforms serving 200,000+ users and 50,000+ live vehicles. Specialized in Angular, Ionic, RxJS, and NgRx, with a track record of 30–70% performance improvements through offline-first architecture, intelligent caching, and real-time data optimization.
               </p>
             </div>
           </div>
@@ -356,38 +539,47 @@ function AboutSection() {
           {/* Right Column: Data Streams */}
           <div className="md:col-span-8 space-y-8">
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-outline mb-6 flex items-center gap-2">
+              <h3 className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-outline mb-6 flex items-center gap-2">
                 <span className="w-8 h-px bg-primary/30"></span>
                 CORE_TECH_STACK
-                <span className="text-[10px] text-primary/50 font-normal uppercase tracking-normal">[PRIORITY_A]</span>
+                <span className="text-[10px] text-primary/40 font-normal uppercase">[PRIORITY_A]</span>
               </h3>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <TechCard icon={<Code2 className="w-5 h-5" />} title="DOCKER" subtitle="Containerization" />
-                <TechCard icon={<Cloud className="w-5 h-5" />} title="AWS" subtitle="Cloud Compute" />
-                <TechCard icon={<Share2 className="w-5 h-5" />} title="GRAPHQL" subtitle="Query Language" />
-                <TechCard icon={<Database className="w-5 h-5" />} title="REDIS" subtitle="Caching Tier" />
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <SkillCard
-                title="REACT ECOSYSTEM"
-                color="cyan"
-                items={[
-                  { label: 'NEXT.JS ARCHITECTURE', value: 'OPTIMIZED' },
-                  { label: 'STATE_MANAGEMENT', value: 'FLUX/REDUX' },
-                  { label: 'UI_ENGINE', value: 'TAILWIND_V4' },
-                ]}
-              />
-              <SkillCard
-                title="NEURAL BACKEND"
-                color="pink"
-                items={[
-                  { label: 'NODE_CORE_SERVICES', value: 'RUNTIME_EXT' },
-                  { label: 'POSTGRES_NESTING', value: 'RELATIONAL' },
-                  { label: 'KAFKA_STREAMS', value: 'SYNC_READY' },
-                ]}
-              />
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 pb-4">
+                <TechCard url="https://developer.mozilla.org/en-US/docs/Web/JavaScript" icon={<SiJavascript size={20} color="#F7DF1E" />} title="JAVASCRIPT" subtitle="Core" colorTheme="cyan" />
+                <TechCard url="https://www.typescriptlang.org/" icon={<SiTypescript size={20} color="#3178C6" />} title="TYPESCRIPT" subtitle="Typed" colorTheme="pink" />
+                <TechCard url="https://developer.mozilla.org/en-US/docs/Web/HTML" icon={<SiHtml5 size={20} color="#E34F26" />} title="HTML5" subtitle="Structure" colorTheme="secondary" />
+
+                <TechCard url="https://developer.mozilla.org/en-US/docs/Web/CSS" icon={<SiCss size={20} color="#1572B6" />} title="CSS / SCSS" subtitle="Styling" colorTheme="cyan" />
+                <TechCard url="https://isocpp.org/" icon={<SiCplusplus size={20} color="#00599C" />} title="C++" subtitle="System" colorTheme="pink" />
+                <TechCard url="https://www.java.com/" icon={<FaJava size={20} color="#007396" />} title="JAVA" subtitle="Backend" colorTheme="secondary" />
+
+                <TechCard url="https://www.python.org/" icon={<SiPython size={20} color="#3776AB" />} title="PYTHON" subtitle="Scripting" colorTheme="cyan" />
+                <TechCard url="https://www.gnu.org/software/bash/" icon={<SiGnubash size={20} color="#4EAA25" />} title="BASH" subtitle="Shell" colorTheme="pink" />
+                <TechCard url="https://angular.dev/" icon={<SiAngular size={20} color="#DD0031" />} title="ANGULAR" subtitle="Framework" colorTheme="secondary" />
+
+                <TechCard url="https://react.dev/" icon={<SiReact size={20} color="#61DAFB" />} title="REACT" subtitle="Library" colorTheme="cyan" />
+                <TechCard url="https://ionicframework.com/" icon={<SiIonic size={20} color="#3880FF" />} title="IONIC" subtitle="Hybrid" colorTheme="pink" />
+                <TechCard url="https://rxjs.dev/" icon={<SiReactivex size={20} color="#B7178C" />} title="RXJS" subtitle="Streams" colorTheme="secondary" />
+
+                <TechCard url="https://ngrx.io/" icon={<Share2 size={20} color="#00DBE9" />} title="NGRX" subtitle="State" colorTheme="cyan" />
+                <TechCard url="https://www.sqlite.org/" icon={<SiSqlite size={20} color="#003B57" />} title="SQLITE" subtitle="Embedded" colorTheme="pink" />
+                <TechCard url="https://www.mongodb.com/" icon={<SiMongodb size={20} color="#47A248" />} title="MONGODB" subtitle="NoSQL" colorTheme="secondary" />
+
+                <TechCard url="https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API" icon={<Database size={20} color="#00DBE9" />} title="INDEXED_DB" subtitle="Cache" colorTheme="cyan" />
+                <TechCard url="https://firebase.google.com/" icon={<SiFirebase size={20} color="#FFCA28" />} title="FIREBASE" subtitle="BaaS" colorTheme="pink" />
+                <TechCard url="https://git-scm.com/" icon={<SiGit size={20} color="#F05032" />} title="GIT" subtitle="VCS" colorTheme="secondary" />
+
+                <TechCard url="https://github.com/" icon={<SiGithub size={20} color="#ffffff" />} title="GITHUB" subtitle="Source" colorTheme="cyan" />
+                <TechCard url="https://about.gitlab.com/" icon={<SiGitlab size={20} color="#FC6D26" />} title="GITLAB" subtitle="CI/CD" colorTheme="pink" />
+                <TechCard url="https://www.postman.com/" icon={<SiPostman size={20} color="#FF6C37" />} title="POSTMAN" subtitle="API Tool" colorTheme="secondary" />
+
+                <TechCard url="https://www.figma.com/" icon={<SiFigma size={20} color="#F24E1E" />} title="FIGMA" subtitle="Design" colorTheme="cyan" />
+                <TechCard url="https://www.atlassian.com/software/jira" icon={<SiJira size={20} color="#0052CC" />} title="JIRA" subtitle="Agile" colorTheme="pink" />
+                <TechCard url="https://aws.amazon.com/" icon={<FaAws size={20} color="#FF9900" />} title="AWS" subtitle="Cloud" colorTheme="secondary" />
+
+                <TechCard url="https://www.linux.org/" icon={<SiLinux size={20} color="#FCC624" />} title="LINUX" subtitle="OS" colorTheme="cyan" />
+              </div>
             </div>
 
             {/* Footer Activity Monitor */}
@@ -419,37 +611,54 @@ function AboutSection() {
   );
 }
 
-function TechCard({ icon, title, subtitle }: { icon: React.ReactNode, title: string, subtitle: string }) {
-  return (
-    <div className="bg-surface-container-low backdrop-blur-md p-4 border border-outline-variant/40 hover:bg-surface-container-high transition-colors group">
-      <div className="text-secondary mb-2 group-hover:scale-110 transition-transform">
+function TechCard({ icon, title, subtitle, colorTheme = 'cyan', url }: { icon: React.ReactNode, title: string, subtitle: string, colorTheme?: 'cyan' | 'pink' | 'secondary', url?: string }) {
+  const borderHover = colorTheme === 'cyan' ? 'hover:border-primary/60' : colorTheme === 'pink' ? 'hover:border-tertiary/60' : 'hover:border-secondary/60';
+  const glowShadow = colorTheme === 'cyan' ? 'hover:shadow-[0_0_15px_rgba(0,219,233,0.15)]' : colorTheme === 'pink' ? 'hover:shadow-[0_0_15px_rgba(255,117,246,0.15)]' : 'hover:shadow-[0_0_15px_rgba(139,252,110,0.15)]';
+
+  const content = (
+    <>
+      <div className="group-hover:scale-110 transition-transform flex items-center justify-center pl-1">
         {icon}
       </div>
-      <div className="text-xs font-bold uppercase tracking-wider mb-1">{title}</div>
-      <div className="text-[9px] text-outline uppercase">{subtitle}</div>
-    </div>
+      <div className="flex flex-col justify-center">
+        <div className="font-headline text-[10px] font-bold uppercase tracking-widest text-white leading-tight mb-0.5">{title}</div>
+        <div className="font-mono text-[8px] text-outline uppercase tracking-wider leading-tight">{subtitle}</div>
+      </div>
+    </>
   );
+
+  const className = cn("bg-surface-container-low backdrop-blur-md p-2 flex items-center gap-3 border border-outline-variant/40 hover:bg-surface-container transition-all group", borderHover, glowShadow, url && "cursor-pointer");
+
+  if (url) {
+    return (
+      <a href={url} target="_blank" rel="noopener noreferrer" className={className}>
+        {content}
+      </a>
+    );
+  }
+
+  return <div className={className}>{content}</div>;
 }
 
-function SkillCard({ title, items, color }: { title: string, items: { label: string, value: string }[], color: 'cyan' | 'pink' }) {
-  const colorClass = color === 'cyan' ? 'text-primary' : 'text-tertiary';
-  const bgClass = color === 'cyan' ? 'bg-primary' : 'bg-tertiary';
-  const shadowClass = color === 'cyan' ? 'shadow-[0_0_8px_#8ff5ff]' : 'shadow-[0_0_8px_#ff75f6]';
+function SkillCard({ title, items, color }: { title: string, items: { label: string, value: string }[], color: 'cyan' | 'pink' | 'secondary' }) {
+  const colorClass = color === 'cyan' ? 'text-primary' : color === 'pink' ? 'text-tertiary' : 'text-secondary';
+  const bgClass = color === 'cyan' ? 'bg-primary' : color === 'pink' ? 'bg-tertiary' : 'bg-secondary';
+  const shadowClass = color === 'cyan' ? 'shadow-[0_0_8px_#8ff5ff]' : color === 'pink' ? 'shadow-[0_0_8px_#ff75f6]' : 'shadow-[0_0_8px_#8bfc6e]';
 
   return (
     <div className={cn(
       "bg-surface-container-low backdrop-blur-md p-8 border-l border-b relative group overflow-hidden",
       color === 'cyan' ? "border-primary/20" : "border-tertiary/20"
     )}>
-      <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-3">
+      <h4 className="font-headline text-base font-bold text-white mb-4 flex items-center gap-3 tracking-wider">
         <span className={cn("w-2 h-2", bgClass, shadowClass)} />
         {title}
       </h4>
       <ul className="space-y-3">
         {items.map((item, i) => (
-          <li key={i} className="flex items-center justify-between text-xs font-mono">
-            <span className="text-on-surface-variant uppercase">{item.label}</span>
-            <span className={cn("font-bold", colorClass)}>{item.value}</span>
+          <li key={i} className="flex items-center justify-between">
+            <span className="font-mono text-[11px] text-on-surface-variant uppercase tracking-wider">{item.label}</span>
+            <span className={cn("font-mono text-[11px] font-bold tracking-widest", colorClass)}>{item.value}</span>
           </li>
         ))}
       </ul>
@@ -528,9 +737,9 @@ function ProjectsSection() {
           {/* Floating Data Streams */}
           <div className="absolute top-0 md:top-10 right-0 md:right-10 flex flex-col items-end gap-2 text-right">
             <span className="font-label text-[10px] text-primary tracking-widest uppercase">Fragment_Stability</span>
-            <span className="font-headline text-xl md:text-2xl font-bold text-tertiary">99.9%</span>
+            <span className="font-headline text-xl md:text-2xl font-bold text-secondary">99.9%</span>
             <div className="w-24 md:w-32 h-1 bg-surface-container overflow-hidden">
-              <div className="w-full h-full bg-tertiary animate-pulse"></div>
+              <div className="w-full h-full bg-secondary animate-pulse"></div>
             </div>
           </div>
 
@@ -549,29 +758,38 @@ function ProjectsSection() {
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="mb-12 border-l-4 border-primary pl-6">
-            <h1 className="text-5xl md:text-6xl font-black tracking-tight text-white mb-2 uppercase text-glow-cyan">
+            <h1 className="font-headline text-4xl md:text-5xl font-black tracking-tight text-white mb-2 uppercase text-glow-cyan">
               SECTOR_X: <span className="text-primary italic">PROJECT_LOGS</span>
             </h1>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <ProjectCard
-              title="GTRopy Fleet Intelligence"
-              category="Project_01 // Fleet_Intel"
+              title="Indane Yatra Mitra"
+              category="Project_01 // IOCL_Fleet"
               icon={<Activity className="w-8 h-8" />}
               image="https://images.unsplash.com/photo-1551288049-bbbda5366391?q=80&w=2070&auto=format&fit=crop"
-              description="High-fidelity telematics platform utilizing neural mapping to optimize fleet logistics in real-time. Built for the Synthetic Architect's grid."
-              tags={['REACT.JS', 'WEBSOCKETS', 'KAFKA', 'D3.JS']}
+              description="Owned end-to-end frontend for IOCL's national fleet platform tracking 26,000+ live vehicles. Architected high-performance data pipelines using NgRx + Web Workers, optimizing load time by ~70% via SQLite offline caching."
+              tags={['IONIC', 'ANGULAR', 'CAPACITOR', 'NGRX', 'SQLITE']}
               color="cyan"
             />
             <ProjectCard
-              title="Mappls API Visualizer"
-              category="Project_02 // Spatial_Data"
+              title="Intouch NextGen"
+              category="Project_02 // Fleet_Analytics"
               icon={<Map className="w-8 h-8" />}
               image="https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?q=80&w=2006&auto=format&fit=crop"
-              description="A neural-spatial interface visualizing multi-dimensional map data through the Mappls API ecosystem. Optimized for hyper-growth urban sectors."
-              tags={['TYPESCRIPT', 'MAPBOX_GL', 'NEXT.JS', 'POSTGIS']}
+              description="Reduced dashboard load time from 15s to <3s by implementing IndexedDB caching for 50MB+ datasets. Built real-time analytics interfaces for enterprise fleet configuration."
+              tags={['ANGULAR', 'NGRX', 'INDEXEDDB', 'ECHARTS']}
               color="pink"
+            />
+            <ProjectCard
+              title="MSIL Employee Commute"
+              category="Project_03 // Transit_Track"
+              icon={<BarChart3 className="w-8 h-8" />}
+              image="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=2070&auto=format&fit=crop"
+              description="Developed live shuttle tracking with continuous location updates, ETA display, and polyline visualization for Maruti Suzuki employees. Integrated Firebase push notifications for live alerts."
+              tags={['IONIC', 'ANGULAR', 'MAPPLS MAPS', 'FIREBASE']}
+              color="secondary"
             />
           </div>
         </div>
@@ -585,10 +803,10 @@ function ProjectsSection() {
   );
 }
 
-function ProjectCard({ title, category, icon, image, description, tags, color }: { title: string, category: string, icon: React.ReactNode, image: string, description: string, tags: string[], color: 'cyan' | 'pink' }) {
-  const borderColor = color === 'cyan' ? 'border-primary' : 'border-tertiary';
-  const textColor = color === 'cyan' ? 'text-primary' : 'text-tertiary';
-  const glowShadow = color === 'cyan' ? 'hover:shadow-[0_0_40px_rgba(0,219,233,0.25)]' : 'hover:shadow-[0_0_40px_rgba(255,117,246,0.25)]';
+function ProjectCard({ title, category, icon, image, description, tags, color }: { title: string, category: string, icon: React.ReactNode, image: string, description: string, tags: string[], color: 'cyan' | 'pink' | 'secondary' }) {
+  const borderColor = color === 'cyan' ? 'border-primary' : color === 'pink' ? 'border-tertiary' : 'border-secondary';
+  const textColor = color === 'cyan' ? 'text-primary' : color === 'pink' ? 'text-tertiary' : 'text-secondary';
+  const glowShadow = color === 'cyan' ? 'hover:shadow-[0_0_40px_rgba(0,219,233,0.25)]' : color === 'pink' ? 'hover:shadow-[0_0_40px_rgba(255,117,246,0.25)]' : 'hover:shadow-[0_0_40px_rgba(139,252,110,0.25)]';
 
   return (
     <div className={cn(
@@ -692,24 +910,26 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
       <div className="max-w-7xl mx-auto relative z-10 p-8 md:p-12">
         <div className="flex flex-col md:flex-row justify-between items-end border-b border-outline-variant/30 pb-6 mb-20 gap-8">
           <div className="relative">
-            <span className="font-label text-xs text-primary tracking-[0.4em] block mb-2">INTEL // SECTOR_CORPORATE</span>
-            <h1 className="font-headline text-7xl md:text-8xl font-black text-on-background leading-none tracking-tighter uppercase">CAREER<br /><span className="text-primary">HISTORY</span></h1>
+            <span className="font-mono text-[11px] font-bold text-primary tracking-[0.4em] uppercase block mb-3">// MAPMYINDIA_INTERNAL_LOG</span>
+            <h1 className="font-headline text-4xl md:text-5xl font-black tracking-tight text-white mb-2 uppercase text-glow-cyan">
+              SECTOR_X: <span className="text-primary italic">CAREER HISTORY</span>
+            </h1>
             <div className="absolute -left-4 top-0 w-1 h-full bg-primary" />
           </div>
 
           <div className="glass-panel p-6 border border-primary/20 min-w-[320px]">
             <div className="flex justify-between items-center mb-4">
-              <span className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">CAREER_UPTIME: 5 YEARS</span>
+              <span className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">CAREER_UPTIME: 2+ YEARS</span>
               <span className="font-label text-[10px] text-secondary">STABLE</span>
             </div>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between text-[10px] font-label mb-1">
                   <span className="text-on-surface-variant">EXP_ACCUMULATED</span>
-                  <span className="text-primary">88%</span>
+                  <span className="text-primary">45%</span>
                 </div>
                 <div className="w-full h-1 bg-surface-container-highest">
-                  <div className="h-full bg-primary w-[88%] shadow-glow-cyan" />
+                  <div className="h-full bg-primary w-[45%] shadow-glow-cyan" />
                 </div>
               </div>
               <div className="flex gap-2">
@@ -720,30 +940,49 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
           </div>
         </div>
 
-        <div className="relative space-y-32 pb-32">
+        <div className="relative space-y-32 pb-12">
           <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-gradient-to-b from-primary via-outline-variant to-transparent -translate-x-1/2 hidden md:block" />
 
           <ExperienceItem
-            title="SENIOR SYSTEMS ARCHITECT"
-            company="Tower GTRopy"
-            description="Deployed high-concurrency neural pipelines for traffic processing. Optimized core engine latency by 45ms across multiple edge nodes."
-            points={['REDUCED_DB_LOCK_CONTENTION', 'SCALED_ORCHESTRATION_LAYER', 'ZERO_DOWNTIME_MIGRATION']}
+            title="SOFTWARE ENGINEER"
+            company="MapMyIndia (CE Info Systems)"
+            description="Leading frontend development for enterprise fleet mapping platforms. Handling high-frequency live data streams for 50,000+ vehicles using NgRx and RxJS observables. Standardized 100+ REST APIs, and upgraded ecosystem from Angular v14 to v19."
+            points={['CHROME_DEVTOOLS_30%_SPEEDUP', 'RXJS_TELEMETRY_PIPELINES', 'INDEXEDDB_CACHING_NODE']}
             image={office1Image}
             icon={<BarChart3 className="w-6 h-6" />}
             side="left"
             color="cyan"
           />
+        </div>
 
-          <ExperienceItem
-            title="CORE_ENGINEERING_LEAD"
-            company="Tower MapmyIndia"
-            description="Pioneered the 'Neural-Path' mapping protocol. Integrated real-time spatial telemetry into the central district hub with 99.9% uptime."
-            points={['SPATIAL_QUERY_OPTIMIZATION', 'GEOSPATIAL_DISTRIBUTION_V3', 'LEGACY_API_DEPRECATION']}
-            image={office2Image}
-            icon={<MapPin className="w-6 h-6" />}
-            side="right"
-            color="pink"
-          />
+        {/* --- ACADEMIC ARCHIVES (EDUCATION) --- */}
+        <div className="mt-4 pt-12 border-t border-primary/20 relative">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-primary to-transparent blur-[2px]" />
+
+          <div className="mb-12 border-l-4 border-tertiary pl-6">
+            <span className="font-mono text-[11px] font-bold text-tertiary tracking-[0.4em] uppercase block mb-3">// NEURAL_TRAINING_FACILITY</span>
+            <h2 className="font-headline text-3xl md:text-5xl font-black tracking-tight text-white mb-2 uppercase text-glow-magenta">
+              ACADEMIC <span className="text-tertiary italic">ARCHIVES</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+            <EducationCard
+              degree="MASTER OF COMPUTER APP"
+              university="Manipal University Jaipur"
+              period="2024 - 2026 (EXPECTED)"
+              focus="Advanced Enterprise Architecture & Scalable Systems"
+              color="cyan"
+            />
+            <EducationCard
+              degree="BSC COMPUTER APP"
+              university="St. Xavier's College, Ranchi"
+              period="2020 - 2023"
+              focus="Foundational CS & Object Oriented Design"
+              grade="CGPA: 8.41 / 10"
+              color="pink"
+            />
+          </div>
         </div>
 
         <div className="flex justify-center pt-12">
@@ -772,10 +1011,10 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
   );
 }
 
-function ExperienceItem({ title, company, description, points, image, icon, side, color }: { title: string, company: string, description: string, points: string[], image: string, icon: React.ReactNode, side: 'left' | 'right', color: 'cyan' | 'pink' }) {
-  const borderColor = color === 'cyan' ? 'border-primary' : 'border-tertiary';
-  const textColor = color === 'cyan' ? 'text-primary' : 'text-tertiary';
-  const bgColor = color === 'cyan' ? 'bg-primary' : 'bg-tertiary';
+function ExperienceItem({ title, company, description, points, image, icon, side, color }: { title: string, company: string, description: string, points: string[], image: string, icon: React.ReactNode, side: 'left' | 'right', color: 'cyan' | 'pink' | 'secondary' }) {
+  const borderColor = color === 'cyan' ? 'border-primary' : color === 'pink' ? 'border-tertiary' : 'border-secondary';
+  const textColor = color === 'cyan' ? 'text-primary' : color === 'pink' ? 'text-tertiary' : 'text-secondary';
+  const bgColor = color === 'cyan' ? 'bg-primary' : color === 'pink' ? 'bg-tertiary' : 'bg-secondary';
 
   return (
     <div className="relative grid grid-cols-1 md:grid-cols-2 gap-12 items-center my-16">
@@ -954,5 +1193,44 @@ function ContactModal({ onClose }: { onClose: () => void }) {
 
       </motion.div>
     </motion.div>
+  );
+}
+
+function EducationCard({ degree, university, period, focus, grade, color }: { degree: string, university: string, period: string, focus: string, grade?: string, color: 'cyan' | 'pink' | 'secondary' }) {
+  const borderColor = color === 'cyan' ? 'border-primary' : color === 'pink' ? 'border-tertiary' : 'border-secondary';
+  const textColor = color === 'cyan' ? 'text-primary' : color === 'pink' ? 'text-tertiary' : 'text-secondary';
+  const bgGlow = color === 'cyan' ? 'bg-primary/5 hover:bg-primary/20 hover:border-primary/50' : color === 'pink' ? 'bg-tertiary/5 hover:bg-tertiary/20 hover:border-tertiary/50' : 'bg-secondary/5 hover:bg-secondary/20 hover:border-secondary/50';
+
+  return (
+    <div className={cn(
+      "glass-panel border p-8 flex flex-col justify-between transition-all duration-300 relative overflow-hidden group",
+      "border-outline-variant/50",
+      bgGlow
+    )}>
+      {/* Decorative corner brackets */}
+      <div className={cn("absolute top-0 left-0 w-3 h-3 border-t border-l transition-all duration-300 group-hover:w-6 group-hover:h-6", borderColor)} />
+      <div className={cn("absolute bottom-0 right-0 w-3 h-3 border-b border-r transition-all duration-300 group-hover:w-6 group-hover:h-6", borderColor)} />
+
+      <div>
+        <div className="flex flex-col xl:flex-row justify-between items-start mb-6 gap-4">
+          <h3 className={cn("font-headline text-xl md:text-2xl font-black uppercase tracking-tight w-full xl:w-2/3", textColor)}>{degree}</h3>
+          <span className="font-mono text-[10px] font-bold tracking-widest text-on-surface bg-surface-container px-2 py-1 border border-outline-variant/50 whitespace-nowrap">{period}</span>
+        </div>
+
+        <p className="font-headline text-sm font-bold text-white uppercase tracking-widest mb-6">
+          <span className="opacity-50 mr-2">AT //</span>{university}
+        </p>
+
+        <p className="font-body text-sm text-on-surface-variant leading-relaxed mb-6">{focus}</p>
+      </div>
+
+      {grade && (
+        <div className="mt-auto pt-4 border-t border-outline-variant/30">
+          <div className="inline-block px-3 py-1 bg-background/50 border border-outline-variant backdrop-blur-md">
+            <span className={cn("font-mono text-[11px] font-bold tracking-widest", textColor)}>{grade}</span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
