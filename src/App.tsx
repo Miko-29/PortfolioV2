@@ -36,6 +36,8 @@ import office2Image from './assets/office2.png';
 import muskanImage from './assets/Muskan.jpg';
 import intouchIcon from './assets/intouch_icon.png';
 import pomodoroIcon from './assets/pomodoro_icon.png';
+import intouchImage from './assets/Intouch.png';
+import pomodoroImage from './assets/pomodoro.png';
 
 type Section = 'MISSION_LOG' | 'DISTRICT_01' | 'SECTOR_X' | 'INTEL';
 
@@ -676,7 +678,7 @@ const PROJECTS_DATA = [
     title: "Intouch Pro",
     category: "Project_01 // Fleet_Management",
     icon: <img src={intouchIcon} alt="Intouch Icon" className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(0,219,233,0.6)]" />,
-    image: "src/assets/intouch.png",
+    image: intouchImage,
     description: "Intouch is a high-performance, cross-platform logistics management app engineered to streamline operations and provide real-time tracking for large vehicle fleets. Built using Ionic, Angular, and TypeScript, the application handles high-frequency data to power interactive dashboards, instant fleet segmentation, real-time alarm push notifications, and detailed historical vehicle trails. Currently supporting over 10,000 active vehicles in production with a modular architecture designed to scale to 50,000, Intouch delivers a seamless, reliable experience across Android and iOS that significantly improves day-to-day operational efficiency for logistics teams.",
     tags: ['IONIC', 'ANGULAR', 'CAPACITOR', 'NGRX', 'SQLITE', 'TYPESCRIPT', 'HTML5', 'SCSS'],
     color: "cyan" as const,
@@ -687,7 +689,7 @@ const PROJECTS_DATA = [
     title: "Pomodoro Timer",
     category: "Project_02 // Time_Management",
     icon: <img src={pomodoroIcon} alt="Pomodoro Icon" className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(255,117,246,0.6)]" />,
-    image: "src/assets/pomodoro.png",
+    image: pomodoroImage,
     description: "This aesthetically driven Pomodoro app is designed to elevate the standard time-management experience by blending productivity with immersive visual design. Built around the core principles of deep work and mindful recovery, the app features a sleek, glassmorphic interface that dynamically shifts between distinct states: Focus, Break, and Rest. **All timer durations and intervals are fully customizable, ensuring a personalized productivity experience.** Each phase is paired with its own unique, ambient background—from a deep starry night to a calming forest—creating a distraction-free, visually engaging environment that helps users stay perfectly synced with their workflow.",
     tags: ['REACT', 'TAILWIND', 'TYPESCRIPT', 'HTML5', 'SCSS'],
     color: "pink" as const,
