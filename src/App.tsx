@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   SiTypescript, SiJavascript, SiHtml5, SiCss, SiAngular, SiIonic, SiReactivex,
   SiSqlite, SiMongodb, SiGit, SiGitlab, SiPostman, SiFigma, SiJira,
-  SiCplusplus, SiPython, SiGnubash, SiReact, SiGithub, SiFirebase, SiLinux
+  SiCplusplus, SiPython, SiGnubash, SiReact, SiGithub, SiFirebase, SiLinux,
+  SiCapacitor, SiApacheecharts, SiTailwindcss
 } from 'react-icons/si';
 import { FaAws, FaJava } from 'react-icons/fa';
 import {
@@ -24,7 +25,8 @@ import {
   Share2,
   Database,
   ChevronUp,
-  X
+  X,
+  Timer
 } from 'lucide-react';
 import { cn } from './lib/utils';
 import cityImage from './assets/city.png';
@@ -32,6 +34,9 @@ import buildingImage from './assets/building.png';
 import office1Image from './assets/office1.png';
 import office2Image from './assets/office2.png';
 import muskanImage from './assets/Muskan.jpg';
+import intouchIcon from './assets/intouch_icon.png';
+import pomodoroIcon from './assets/pomodoro_icon.png';
+
 type Section = 'MISSION_LOG' | 'DISTRICT_01' | 'SECTOR_X' | 'INTEL';
 
 function CyberpunkCursor() {
@@ -666,6 +671,31 @@ function SkillCard({ title, items, color }: { title: string, items: { label: str
   );
 }
 
+const PROJECTS_DATA = [
+  {
+    title: "Intouch Pro",
+    category: "Project_01 // Fleet_Management",
+    icon: <img src={intouchIcon} alt="Intouch Icon" className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(0,219,233,0.6)]" />,
+    image: "src/assets/intouch.png",
+    description: "Intouch is a high-performance, cross-platform logistics management app engineered to streamline operations and provide real-time tracking for large vehicle fleets. Built using Ionic, Angular, and TypeScript, the application handles high-frequency data to power interactive dashboards, instant fleet segmentation, real-time alarm push notifications, and detailed historical vehicle trails. Currently supporting over 10,000 active vehicles in production with a modular architecture designed to scale to 50,000, Intouch delivers a seamless, reliable experience across Android and iOS that significantly improves day-to-day operational efficiency for logistics teams.",
+    tags: ['IONIC', 'ANGULAR', 'CAPACITOR', 'NGRX', 'SQLITE', 'TYPESCRIPT', 'HTML5', 'SCSS'],
+    color: "cyan" as const,
+    // sourceUrl: "#",
+    deployUrl: "https://play.google.com/store/apps/details?id=intouch.mappls.app"
+  },
+  {
+    title: "Pomodoro Timer",
+    category: "Project_02 // Time_Management",
+    icon: <img src={pomodoroIcon} alt="Pomodoro Icon" className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(255,117,246,0.6)]" />,
+    image: "src/assets/pomodoro.png",
+    description: "This aesthetically driven Pomodoro app is designed to elevate the standard time-management experience by blending productivity with immersive visual design. Built around the core principles of deep work and mindful recovery, the app features a sleek, glassmorphic interface that dynamically shifts between distinct states: Focus, Break, and Rest. **All timer durations and intervals are fully customizable, ensuring a personalized productivity experience.** Each phase is paired with its own unique, ambient background—from a deep starry night to a calming forest—creating a distraction-free, visually engaging environment that helps users stay perfectly synced with their workflow.",
+    tags: ['REACT', 'TAILWIND', 'TYPESCRIPT', 'HTML5', 'SCSS'],
+    color: "pink" as const,
+    sourceUrl: "https://github.com/Miko-29/Pomodoro",
+    deployUrl: "https://miko-29.github.io/Pomodoro/"
+  },
+];
+
 function ProjectsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -764,33 +794,9 @@ function ProjectsSection() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <ProjectCard
-              title="Indane Yatra Mitra"
-              category="Project_01 // IOCL_Fleet"
-              icon={<Activity className="w-8 h-8" />}
-              image="https://images.unsplash.com/photo-1551288049-bbbda5366391?q=80&w=2070&auto=format&fit=crop"
-              description="Owned end-to-end frontend for IOCL's national fleet platform tracking 26,000+ live vehicles. Architected high-performance data pipelines using NgRx + Web Workers, optimizing load time by ~70% via SQLite offline caching."
-              tags={['IONIC', 'ANGULAR', 'CAPACITOR', 'NGRX', 'SQLITE']}
-              color="cyan"
-            />
-            <ProjectCard
-              title="Intouch NextGen"
-              category="Project_02 // Fleet_Analytics"
-              icon={<Map className="w-8 h-8" />}
-              image="https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?q=80&w=2006&auto=format&fit=crop"
-              description="Reduced dashboard load time from 15s to <3s by implementing IndexedDB caching for 50MB+ datasets. Built real-time analytics interfaces for enterprise fleet configuration."
-              tags={['ANGULAR', 'NGRX', 'INDEXEDDB', 'ECHARTS']}
-              color="pink"
-            />
-            <ProjectCard
-              title="MSIL Employee Commute"
-              category="Project_03 // Transit_Track"
-              icon={<BarChart3 className="w-8 h-8" />}
-              image="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=2070&auto=format&fit=crop"
-              description="Developed live shuttle tracking with continuous location updates, ETA display, and polyline visualization for Maruti Suzuki employees. Integrated Firebase push notifications for live alerts."
-              tags={['IONIC', 'ANGULAR', 'MAPPLS MAPS', 'FIREBASE']}
-              color="secondary"
-            />
+            {PROJECTS_DATA.map((project, index) => (
+              <ProjectCard key={index} {...project} />
+            ))}
           </div>
         </div>
       </div>
@@ -803,7 +809,7 @@ function ProjectsSection() {
   );
 }
 
-function ProjectCard({ title, category, icon, image, description, tags, color }: { title: string, category: string, icon: React.ReactNode, image: string, description: string, tags: string[], color: 'cyan' | 'pink' | 'secondary' }) {
+function ProjectCard({ title, category, icon, image, description, tags, color, sourceUrl, deployUrl }: { title: string, category: string, icon: React.ReactNode, image: string, description: string, tags: string[], color: 'cyan' | 'pink' | 'secondary', sourceUrl?: string, deployUrl?: string }) {
   const borderColor = color === 'cyan' ? 'border-primary' : color === 'pink' ? 'border-tertiary' : 'border-secondary';
   const textColor = color === 'cyan' ? 'text-primary' : color === 'pink' ? 'text-tertiary' : 'text-secondary';
   const glowShadow = color === 'cyan' ? 'hover:shadow-[0_0_40px_rgba(0,219,233,0.25)]' : color === 'pink' ? 'hover:shadow-[0_0_40px_rgba(255,117,246,0.25)]' : 'hover:shadow-[0_0_40px_rgba(139,252,110,0.25)]';
@@ -826,30 +832,59 @@ function ProjectCard({ title, category, icon, image, description, tags, color }:
         <div className="aspect-video mb-8 bg-black relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-700">
           <img
             src={image}
-            className="w-full h-full object-cover opacity-60 mix-blend-screen"
+            className="w-full h-full object-cover"
             alt={title}
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
 
           <div className="absolute bottom-4 left-4 flex gap-3 opacity-40 group-hover:opacity-100 transition-opacity duration-500">
-            <button className={cn("flex items-center gap-2 px-3 py-1.5 border bg-background/80 backdrop-blur-sm hover:brightness-125 transition-all", borderColor, textColor)}>
-              <Terminal className="w-3.5 h-3.5" />
-              <span className="font-headline font-bold uppercase text-[9px] tracking-widest">SOURCE_CODE</span>
-            </button>
-            <button className={cn("flex items-center gap-2 px-3 py-1.5 border bg-background/80 backdrop-blur-sm hover:brightness-125 transition-all", borderColor, textColor)}>
-              <Power className="w-3.5 h-3.5" />
-              <span className="font-headline font-bold uppercase text-[9px] tracking-widest">LAUNCH_DEPLOY</span>
-            </button>
+            {sourceUrl && sourceUrl !== '#' && (
+              <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className={cn("flex items-center gap-2 px-3 py-1.5 border bg-background/80 backdrop-blur-sm hover:brightness-125 transition-all", borderColor, textColor)}>
+                <Terminal className="w-3.5 h-3.5" />
+                <span className="font-headline font-bold uppercase text-[9px] tracking-widest">SOURCE_CODE</span>
+              </a>
+            )}
+            {deployUrl && deployUrl !== '#' && (
+              <a href={deployUrl} target="_blank" rel="noopener noreferrer" className={cn("flex items-center gap-2 px-3 py-1.5 border bg-background/80 backdrop-blur-sm hover:brightness-125 transition-all", borderColor, textColor)}>
+                <Power className="w-3.5 h-3.5" />
+                <span className="font-headline font-bold uppercase text-[9px] tracking-widest">LAUNCH_DEPLOY</span>
+              </a>
+            )}
           </div>
         </div>
 
         <p className="font-body text-on-surface-variant leading-relaxed mb-6">{description}</p>
 
         <div className="flex flex-wrap gap-2 mb-2">
-          {tags.map(tag => (
-            <span key={tag} className={cn("text-[10px] font-label px-3 py-1 bg-surface-container-high border border-outline-variant", textColor)}>{tag}</span>
-          ))}
+          {tags.map(tag => {
+            const size = 12;
+            const t = tag.toUpperCase();
+            let icon = null;
+            switch (t) {
+              case 'ANGULAR': icon = <SiAngular size={size} color="#DD0031" className="shrink-0" />; break;
+              case 'IONIC': icon = <SiIonic size={size} color="#3880FF" className="shrink-0" />; break;
+              case 'TYPESCRIPT': icon = <SiTypescript size={size} color="#3178C6" className="shrink-0" />; break;
+              case 'JAVASCRIPT': icon = <SiJavascript size={size} color="#F7DF1E" className="shrink-0" />; break;
+              case 'REACT': icon = <SiReact size={size} color="#61DAFB" className="shrink-0" />; break;
+              case 'TAILWIND': icon = <SiTailwindcss size={size} color="#06B6D4" className="shrink-0" />; break;
+              case 'HTML5': icon = <SiHtml5 size={size} color="#E34F26" className="shrink-0" />; break;
+              case 'SCSS':
+              case 'CSS': icon = <SiCss size={size} color="#1572B6" className="shrink-0" />; break;
+              case 'NGRX': icon = <Share2 size={size} color="#00DBE9" className="shrink-0" />; break;
+              case 'SQLITE': icon = <SiSqlite size={size} color="#003B57" className="shrink-0" />; break;
+              case 'CAPACITOR': icon = <SiCapacitor size={size} color="#119EFF" className="shrink-0" />; break;
+              case 'INDEXEDDB': icon = <Database size={size} color="#00DBE9" className="shrink-0" />; break;
+              case 'ECHARTS': icon = <SiApacheecharts size={size} color="#AA344D" className="shrink-0" />; break;
+              case 'FIREBASE': icon = <SiFirebase size={size} color="#FFCA28" className="shrink-0" />; break;
+              case 'MAPPLS MAPS': icon = <Map size={size} className={cn(textColor, "shrink-0")} />; break;
+            }
+            return (
+              <span key={tag} className={cn("flex items-center gap-1.5 text-[10px] font-label px-3 py-1 bg-surface-container-high border border-outline-variant", textColor)}>
+                {icon}
+                {tag}
+              </span>
+            );
+          })}
         </div>
       </div>
     </div>
