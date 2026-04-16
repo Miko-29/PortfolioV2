@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
+import emailjs from '@emailjs/browser';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   SiTypescript, SiJavascript, SiHtml5, SiCss, SiAngular, SiIonic, SiReactivex,
   SiSqlite, SiMongodb, SiGit, SiGitlab, SiPostman, SiFigma, SiJira,
   SiCplusplus, SiPython, SiGnubash, SiReact, SiGithub, SiFirebase, SiLinux,
-  SiCapacitor, SiApacheecharts, SiTailwindcss
+  SiCapacitor, SiApacheecharts, SiTailwindcss, SiLeetcode, SiGmail
 } from 'react-icons/si';
-import { FaAws, FaJava } from 'react-icons/fa';
+import { FaAws, FaJava, FaLinkedin } from 'react-icons/fa';
 import {
   Settings,
   Terminal,
@@ -26,7 +27,8 @@ import {
   Database,
   ChevronUp,
   X,
-  Timer
+  Timer,
+  Mail
 } from 'lucide-react';
 import { cn } from './lib/utils';
 import cityImage from './assets/city.png';
@@ -38,6 +40,7 @@ import intouchIcon from './assets/intouch_icon.png';
 import pomodoroIcon from './assets/pomodoro_icon.png';
 import intouchImage from './assets/Intouch.png';
 import pomodoroImage from './assets/pomodoro.png';
+import resumePDF from './assets/Muskan_Kumari_Frontend_Resume.pdf';
 
 type Section = 'MISSION_LOG' | 'DISTRICT_01' | 'SECTOR_X' | 'INTEL';
 
@@ -475,6 +478,27 @@ function HeroSection({ onDive }: { onDive: () => void }) {
   );
 }
 
+function SocialIconLink({ href, icon, label, glowColor, borderColor }: { href: string, icon: React.ReactNode, label: string, glowColor: string, borderColor: string }) {
+  const [hovered, setHovered] = useState(false);
+  const style = hovered
+    ? { borderColor, boxShadow: `0 0 14px ${glowColor}`, color: borderColor }
+    : {};
+  return (
+    <a
+      href={href}
+      target={href.startsWith('mailto') ? undefined : '_blank'}
+      rel="noopener noreferrer"
+      title={label}
+      className="relative w-10 h-10 flex items-center justify-center border border-outline-variant/40 bg-surface-container text-on-surface-variant transition-all duration-300"
+      style={style}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {icon}
+    </a>
+  );
+}
+
 function AboutSection() {
   return (
     <motion.section
@@ -494,13 +518,27 @@ function AboutSection() {
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10 p-8 md:p-12">
-        <div className="mb-12 border-l-4 border-primary pl-6">
-          <h1 className="font-headline text-4xl md:text-5xl font-black tracking-tight text-white mb-3 uppercase text-glow-cyan">
-            SECTOR_X: <span className="text-primary italic">NEURAL PROFILE</span>
-          </h1>
-          <div className="flex items-center gap-4">
-            <span className="bg-secondary/20 text-secondary px-3 py-1 text-[11px] tracking-widest uppercase font-bold font-mono border border-secondary/30">STATUS: OPERATIONAL</span>
-            <span className="text-outline text-[11px] tracking-widest uppercase font-mono">ID: MSK_9901_BRAVO</span>
+        <div className="mb-12 border-l-4 border-primary pl-6 flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+          <div>
+            <h1 className="font-headline text-4xl md:text-5xl font-black tracking-tight text-white mb-3 uppercase text-glow-cyan">
+              SECTOR_X: <span className="text-primary italic">NEURAL PROFILE</span>
+            </h1>
+            <div className="flex items-center gap-4">
+              <span className="bg-secondary/20 text-secondary px-3 py-1 text-[11px] tracking-widest uppercase font-bold font-mono border border-secondary/30">STATUS: OPERATIONAL</span>
+              <span className="text-outline text-[11px] tracking-widest uppercase font-mono">ID: MSK_9901_BRAVO</span>
+            </div>
+          </div>
+
+          {/* Social Links — icon row */}
+          <div className="flex items-center gap-2">
+            {[
+              { href: "https://github.com/Miko-29", icon: <SiGithub size={18} />, label: "GitHub", glowColor: "rgba(170,170,170,0.4)", borderColor: "#aaaaaa" },
+              { href: "https://www.linkedin.com/in/muskan-kumari-3b5a19222/", icon: <FaLinkedin size={18} />, label: "LinkedIn", glowColor: "rgba(10,102,194,0.4)", borderColor: "#0A66C2" },
+              { href: "https://leetcode.com/u/muskan2912/", icon: <SiLeetcode size={18} />, label: "LeetCode", glowColor: "rgba(255,161,22,0.4)", borderColor: "#FFA116" },
+              { href: "mailto:muskan2912002@gmail.com", icon: <SiGmail size={18} />, label: "Gmail", glowColor: "rgba(234,67,53,0.4)", borderColor: "#EA4335" },
+            ].map(({ href, icon, label, glowColor, borderColor }) => (
+              <SocialIconLink key={label} href={href} icon={icon} label={label} glowColor={glowColor} borderColor={borderColor} />
+            ))}
           </div>
         </div>
 
@@ -535,12 +573,6 @@ function AboutSection() {
               </div>
             </div>
 
-            <div className="bg-surface-container-low backdrop-blur-md p-6 border-t border-primary/10">
-              <h3 className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-outline mb-4">// LOG.01_MISSION_STATEMENT</h3>
-              <p className="font-body text-sm leading-relaxed text-on-surface/75">
-                Frontend Engineer with 2+ years of experience building enterprise-grade fleet and transit platforms serving 200,000+ users and 50,000+ live vehicles. Specialized in Angular, Ionic, RxJS, and NgRx, with a track record of 30–70% performance improvements through offline-first architecture, intelligent caching, and real-time data optimization.
-              </p>
-            </div>
           </div>
 
           {/* Right Column: Data Streams */}
@@ -553,40 +585,48 @@ function AboutSection() {
               </h3>
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 pb-4">
-                <TechCard url="https://developer.mozilla.org/en-US/docs/Web/JavaScript" icon={<SiJavascript size={20} color="#F7DF1E" />} title="JAVASCRIPT" subtitle="Core" colorTheme="cyan" />
-                <TechCard url="https://www.typescriptlang.org/" icon={<SiTypescript size={20} color="#3178C6" />} title="TYPESCRIPT" subtitle="Typed" colorTheme="pink" />
-                <TechCard url="https://developer.mozilla.org/en-US/docs/Web/HTML" icon={<SiHtml5 size={20} color="#E34F26" />} title="HTML5" subtitle="Structure" colorTheme="secondary" />
+                <TechCard url="https://developer.mozilla.org/en-US/docs/Web/JavaScript" icon={<SiJavascript size={20} color="#F7DF1E" />} title="JAVASCRIPT" subtitle="Core" brandColor="#F7DF1E" />
+                <TechCard url="https://www.typescriptlang.org/" icon={<SiTypescript size={20} color="#3178C6" />} title="TYPESCRIPT" subtitle="Typed" brandColor="#3178C6" />
+                <TechCard url="https://developer.mozilla.org/en-US/docs/Web/HTML" icon={<SiHtml5 size={20} color="#E34F26" />} title="HTML5" subtitle="Structure" brandColor="#E34F26" />
 
-                <TechCard url="https://developer.mozilla.org/en-US/docs/Web/CSS" icon={<SiCss size={20} color="#1572B6" />} title="CSS / SCSS" subtitle="Styling" colorTheme="cyan" />
-                <TechCard url="https://isocpp.org/" icon={<SiCplusplus size={20} color="#00599C" />} title="C++" subtitle="System" colorTheme="pink" />
-                <TechCard url="https://www.java.com/" icon={<FaJava size={20} color="#007396" />} title="JAVA" subtitle="Backend" colorTheme="secondary" />
+                <TechCard url="https://developer.mozilla.org/en-US/docs/Web/CSS" icon={<SiCss size={20} color="#1572B6" />} title="CSS / SCSS" subtitle="Styling" brandColor="#1572B6" />
+                <TechCard url="https://isocpp.org/" icon={<SiCplusplus size={20} color="#00599C" />} title="C++" subtitle="System" brandColor="#659AD2" />
+                <TechCard url="https://www.java.com/" icon={<FaJava size={20} color="#007396" />} title="JAVA" subtitle="Backend" brandColor="#007396" />
 
-                <TechCard url="https://www.python.org/" icon={<SiPython size={20} color="#3776AB" />} title="PYTHON" subtitle="Scripting" colorTheme="cyan" />
-                <TechCard url="https://www.gnu.org/software/bash/" icon={<SiGnubash size={20} color="#4EAA25" />} title="BASH" subtitle="Shell" colorTheme="pink" />
-                <TechCard url="https://angular.dev/" icon={<SiAngular size={20} color="#DD0031" />} title="ANGULAR" subtitle="Framework" colorTheme="secondary" />
+                <TechCard url="https://www.python.org/" icon={<SiPython size={20} color="#3776AB" />} title="PYTHON" subtitle="Scripting" brandColor="#3776AB" />
+                <TechCard url="https://www.gnu.org/software/bash/" icon={<SiGnubash size={20} color="#4EAA25" />} title="BASH" subtitle="Shell" brandColor="#4EAA25" />
+                <TechCard url="https://angular.dev/" icon={<SiAngular size={20} color="#DD0031" />} title="ANGULAR" subtitle="Framework" brandColor="#DD0031" />
 
-                <TechCard url="https://react.dev/" icon={<SiReact size={20} color="#61DAFB" />} title="REACT" subtitle="Library" colorTheme="cyan" />
-                <TechCard url="https://ionicframework.com/" icon={<SiIonic size={20} color="#3880FF" />} title="IONIC" subtitle="Hybrid" colorTheme="pink" />
-                <TechCard url="https://rxjs.dev/" icon={<SiReactivex size={20} color="#B7178C" />} title="RXJS" subtitle="Streams" colorTheme="secondary" />
+                <TechCard url="https://react.dev/" icon={<SiReact size={20} color="#61DAFB" />} title="REACT" subtitle="Library" brandColor="#61DAFB" />
+                <TechCard url="https://ionicframework.com/" icon={<SiIonic size={20} color="#3880FF" />} title="IONIC" subtitle="Hybrid" brandColor="#3880FF" />
+                <TechCard url="https://rxjs.dev/" icon={<SiReactivex size={20} color="#B7178C" />} title="RXJS" subtitle="Streams" brandColor="#B7178C" />
 
-                <TechCard url="https://ngrx.io/" icon={<Share2 size={20} color="#00DBE9" />} title="NGRX" subtitle="State" colorTheme="cyan" />
-                <TechCard url="https://www.sqlite.org/" icon={<SiSqlite size={20} color="#003B57" />} title="SQLITE" subtitle="Embedded" colorTheme="pink" />
-                <TechCard url="https://www.mongodb.com/" icon={<SiMongodb size={20} color="#47A248" />} title="MONGODB" subtitle="NoSQL" colorTheme="secondary" />
+                <TechCard url="https://ngrx.io/" icon={<Share2 size={20} color="#00DBE9" />} title="NGRX" subtitle="State" brandColor="#00DBE9" />
+                <TechCard url="https://www.sqlite.org/" icon={<SiSqlite size={20} color="#0d88d5" />} title="SQLITE" subtitle="Embedded" brandColor="#0d88d5" />
+                <TechCard url="https://www.mongodb.com/" icon={<SiMongodb size={20} color="#47A248" />} title="MONGODB" subtitle="NoSQL" brandColor="#47A248" />
 
-                <TechCard url="https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API" icon={<Database size={20} color="#00DBE9" />} title="INDEXED_DB" subtitle="Cache" colorTheme="cyan" />
-                <TechCard url="https://firebase.google.com/" icon={<SiFirebase size={20} color="#FFCA28" />} title="FIREBASE" subtitle="BaaS" colorTheme="pink" />
-                <TechCard url="https://git-scm.com/" icon={<SiGit size={20} color="#F05032" />} title="GIT" subtitle="VCS" colorTheme="secondary" />
+                <TechCard url="https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API" icon={<Database size={20} color="#00DBE9" />} title="INDEXED_DB" subtitle="Cache" brandColor="#00DBE9" />
+                <TechCard url="https://firebase.google.com/" icon={<SiFirebase size={20} color="#FFCA28" />} title="FIREBASE" subtitle="BaaS" brandColor="#FFCA28" />
+                <TechCard url="https://git-scm.com/" icon={<SiGit size={20} color="#F05032" />} title="GIT" subtitle="VCS" brandColor="#F05032" />
 
-                <TechCard url="https://github.com/" icon={<SiGithub size={20} color="#ffffff" />} title="GITHUB" subtitle="Source" colorTheme="cyan" />
-                <TechCard url="https://about.gitlab.com/" icon={<SiGitlab size={20} color="#FC6D26" />} title="GITLAB" subtitle="CI/CD" colorTheme="pink" />
-                <TechCard url="https://www.postman.com/" icon={<SiPostman size={20} color="#FF6C37" />} title="POSTMAN" subtitle="API Tool" colorTheme="secondary" />
+                <TechCard url="https://github.com/" icon={<SiGithub size={20} color="#aaaaaa" />} title="GITHUB" subtitle="Source" brandColor="#aaaaaa" />
+                <TechCard url="https://about.gitlab.com/" icon={<SiGitlab size={20} color="#FC6D26" />} title="GITLAB" subtitle="CI/CD" brandColor="#FC6D26" />
+                <TechCard url="https://www.postman.com/" icon={<SiPostman size={20} color="#FF6C37" />} title="POSTMAN" subtitle="API Tool" brandColor="#FF6C37" />
 
-                <TechCard url="https://www.figma.com/" icon={<SiFigma size={20} color="#F24E1E" />} title="FIGMA" subtitle="Design" colorTheme="cyan" />
-                <TechCard url="https://www.atlassian.com/software/jira" icon={<SiJira size={20} color="#0052CC" />} title="JIRA" subtitle="Agile" colorTheme="pink" />
-                <TechCard url="https://aws.amazon.com/" icon={<FaAws size={20} color="#FF9900" />} title="AWS" subtitle="Cloud" colorTheme="secondary" />
+                <TechCard url="https://www.figma.com/" icon={<SiFigma size={20} color="#F24E1E" />} title="FIGMA" subtitle="Design" brandColor="#F24E1E" />
+                <TechCard url="https://www.atlassian.com/software/jira" icon={<SiJira size={20} color="#0052CC" />} title="JIRA" subtitle="Agile" brandColor="#0052CC" />
+                <TechCard url="https://aws.amazon.com/" icon={<FaAws size={20} color="#FF9900" />} title="AWS" subtitle="Cloud" brandColor="#FF9900" />
 
-                <TechCard url="https://www.linux.org/" icon={<SiLinux size={20} color="#FCC624" />} title="LINUX" subtitle="OS" colorTheme="cyan" />
+                <TechCard url="https://www.linux.org/" icon={<SiLinux size={20} color="#FCC624" />} title="LINUX" subtitle="OS" brandColor="#FCC624" />
               </div>
+            </div>
+
+            {/* Mission Statement */}
+            <div className="bg-surface-container-low backdrop-blur-md p-6 border-t border-primary/10">
+              <h3 className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-outline mb-4">// LOG.01_MISSION_STATEMENT</h3>
+              <p className="font-body text-sm leading-relaxed text-on-surface/75">
+                Frontend Engineer with 2+ years of experience building enterprise-grade fleet and transit platforms serving 200,000+ users and 50,000+ live vehicles. Specialized in Angular, Ionic, RxJS, and NgRx, with a track record of 30–70% performance improvements through offline-first architecture, intelligent caching, and real-time data optimization.
+              </p>
             </div>
 
             {/* Footer Activity Monitor */}
@@ -618,9 +658,19 @@ function AboutSection() {
   );
 }
 
-function TechCard({ icon, title, subtitle, colorTheme = 'cyan', url }: { icon: React.ReactNode, title: string, subtitle: string, colorTheme?: 'cyan' | 'pink' | 'secondary', url?: string }) {
-  const borderHover = colorTheme === 'cyan' ? 'hover:border-primary/60' : colorTheme === 'pink' ? 'hover:border-tertiary/60' : 'hover:border-secondary/60';
-  const glowShadow = colorTheme === 'cyan' ? 'hover:shadow-[0_0_15px_rgba(0,219,233,0.15)]' : colorTheme === 'pink' ? 'hover:shadow-[0_0_15px_rgba(255,117,246,0.15)]' : 'hover:shadow-[0_0_15px_rgba(139,252,110,0.15)]';
+function TechCard({ icon, title, subtitle, brandColor = '#00DBE9', url }: { icon: React.ReactNode, title: string, subtitle: string, brandColor?: string, url?: string }) {
+  const [hovered, setHovered] = useState(false);
+
+  const hoverStyle = hovered ? {
+    borderColor: `${brandColor}90`,
+    boxShadow: `0 0 16px ${brandColor}35`,
+    background: `${brandColor}0d`,
+  } : {};
+
+  const baseClass = cn(
+    "bg-surface-container-low backdrop-blur-md p-2 flex items-center gap-3 border border-outline-variant/40 transition-all duration-300 group",
+    url && "cursor-pointer"
+  );
 
   const content = (
     <>
@@ -634,17 +684,32 @@ function TechCard({ icon, title, subtitle, colorTheme = 'cyan', url }: { icon: R
     </>
   );
 
-  const className = cn("bg-surface-container-low backdrop-blur-md p-2 flex items-center gap-3 border border-outline-variant/40 hover:bg-surface-container transition-all group", borderHover, glowShadow, url && "cursor-pointer");
-
   if (url) {
     return (
-      <a href={url} target="_blank" rel="noopener noreferrer" className={className}>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={baseClass}
+        style={hoverStyle}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
         {content}
       </a>
     );
   }
 
-  return <div className={className}>{content}</div>;
+  return (
+    <div
+      className={baseClass}
+      style={hoverStyle}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {content}
+    </div>
+  );
 }
 
 function SkillCard({ title, items, color }: { title: string, items: { label: string, value: string }[], color: 'cyan' | 'pink' | 'secondary' }) {
@@ -669,6 +734,7 @@ function SkillCard({ title, items, color }: { title: string, items: { label: str
           </li>
         ))}
       </ul>
+
     </div>
   );
 }
@@ -982,7 +1048,7 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
 
           <ExperienceItem
             title="SOFTWARE ENGINEER"
-            company="MapMyIndia (CE Info Systems)"
+            company="MapMyIndia"
             description="Leading frontend development for enterprise fleet mapping platforms. Handling high-frequency live data streams for 50,000+ vehicles using NgRx and RxJS observables. Standardized 100+ REST APIs, and upgraded ecosystem from Angular v14 to v19."
             points={['CHROME_DEVTOOLS_30%_SPEEDUP', 'RXJS_TELEMETRY_PIPELINES', 'INDEXEDDB_CACHING_NODE']}
             image={office1Image}
@@ -1032,9 +1098,13 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
             <h4 className="font-headline text-3xl font-bold mb-4 uppercase">Initialize Protocol?</h4>
             <p className="font-body text-sm text-on-surface-variant mb-8 px-12">Requesting full neural dossier access for the corporate recruitment protocol. Secure channel established.</p>
             <div className="flex flex-col md:flex-row gap-4 justify-center">
-              <button className="bg-primary text-background px-8 py-4 font-headline font-black text-sm uppercase tracking-widest hover:shadow-glow-cyan transition-all">
+              <a
+                href={resumePDF}
+                download="Muskan_Kumari_Frontend_Resume.pdf"
+                className="bg-primary text-background px-8 py-4 font-headline font-black text-sm uppercase tracking-widest hover:shadow-glow-cyan transition-all inline-block"
+              >
                 DOWNLOAD_RESUME.EXE
-              </button>
+              </a>
               <button
                 onClick={() => onOpenContact && onOpenContact()}
                 className="border border-primary text-primary px-8 py-4 font-headline font-black text-sm uppercase tracking-widest hover:bg-primary/10 transition-all">
@@ -1109,7 +1179,7 @@ function ExperienceItem({ title, company, description, points, image, icon, side
               side === 'left' ? "skew-x-[-12deg]" : "skew-x-[12deg]"
             )}>
               <span className={cn(
-                "block font-headline text-xl font-bold italic tracking-wider",
+                "block font-headline text-xl font-bold tracking-wider",
                 textColor,
                 side === 'left' ? "skew-x-[12deg]" : "skew-x-[-12deg]"
               )}>{company.replace('Tower ', '')}</span>
@@ -1141,6 +1211,34 @@ function ExperienceItem({ title, company, description, points, image, icon, side
 }
 
 function ContactModal({ onClose }: { onClose: () => void }) {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formRef.current) return;
+    setStatus('sending');
+    setErrorMsg('');
+
+    try {
+      await emailjs.sendForm(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        formRef.current,
+        { publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY }
+      );
+      setStatus('success');
+      formRef.current.reset();
+      // Auto-dismiss modal after 3s on success
+      setTimeout(() => { onClose(); setStatus('idle'); }, 3000);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'UPLINK_FAILED';
+      setErrorMsg(msg);
+      setStatus('error');
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -1176,49 +1274,97 @@ function ContactModal({ onClose }: { onClose: () => void }) {
 
         {/* Terminal Form Body */}
         <div className="p-8 lg:p-12 relative z-10">
-          <form className="space-y-8 relative" onSubmit={(e) => e.preventDefault()}>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="space-y-2 group">
-                <label className="font-mono text-[10px] text-primary tracking-widest uppercase block group-focus-within:text-white transition-colors">UPLINK_ID</label>
-                <div className="relative">
-                  <input className="w-full bg-surface-container-low/50 border-0 border-b border-outline-variant text-on-surface font-mono placeholder:text-on-surface-variant/50 focus:ring-0 focus:border-primary transition-all py-3 px-2 outline-none focus:bg-primary/5" placeholder="GUEST_IDENTITY" type="text" />
-                  <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-focus-within:w-full transition-all duration-500"></div>
+          {status === 'success' ? (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center justify-center py-16 gap-6 text-center"
+            >
+              <div className="w-16 h-16 border-2 border-secondary flex items-center justify-center shadow-[0_0_20px_rgba(139,252,110,0.4)]">
+                <span className="text-secondary text-3xl font-black">✓</span>
+              </div>
+              <h3 className="font-headline text-2xl font-black text-white uppercase tracking-widest">UPLINK_ESTABLISHED</h3>
+              <p className="font-mono text-sm text-on-surface-variant">Message transmitted successfully. Closing terminal in 3s...</p>
+            </motion.div>
+          ) : (
+            <form ref={formRef} className="space-y-8 relative" onSubmit={handleSubmit}>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-2 group">
+                  <label className="font-mono text-[10px] text-primary tracking-widest uppercase block group-focus-within:text-white transition-colors">UPLINK_ID</label>
+                  <div className="relative">
+                    <input
+                      name="name"
+                      required
+                      className="w-full bg-surface-container-low/50 border-0 border-b border-outline-variant text-on-surface font-mono placeholder:text-on-surface-variant/50 focus:ring-0 focus:border-primary transition-all py-3 px-2 outline-none focus:bg-primary/5"
+                      placeholder="GUEST_IDENTITY"
+                      type="text"
+                    />
+                    <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-focus-within:w-full transition-all duration-500"></div>
+                  </div>
+                </div>
+                <div className="space-y-2 group">
+                  <label className="font-mono text-[10px] text-primary tracking-widest uppercase block group-focus-within:text-white transition-colors">COMM_CHANNEL</label>
+                  <div className="relative">
+                    <input
+                      name="email"
+                      required
+                      className="w-full bg-surface-container-low/50 border-0 border-b border-outline-variant text-on-surface font-mono placeholder:text-on-surface-variant/50 focus:ring-0 focus:border-primary transition-all py-3 px-2 outline-none focus:bg-primary/5"
+                      placeholder="ENCRYPTED_ADR@PROTO.CY"
+                      type="email"
+                    />
+                    <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-focus-within:w-full transition-all duration-500"></div>
+                  </div>
                 </div>
               </div>
               <div className="space-y-2 group">
-                <label className="font-mono text-[10px] text-primary tracking-widest uppercase block group-focus-within:text-white transition-colors">COMM_CHANNEL</label>
+                <label className="font-mono text-[10px] text-primary tracking-widest uppercase block group-focus-within:text-white transition-colors">ENCRYPTED_MESSAGE</label>
                 <div className="relative">
-                  <input className="w-full bg-surface-container-low/50 border-0 border-b border-outline-variant text-on-surface font-mono placeholder:text-on-surface-variant/50 focus:ring-0 focus:border-primary transition-all py-3 px-2 outline-none focus:bg-primary/5" placeholder="ENCRYPTED_ADR@PROTO.CY" type="email" />
+                  <textarea
+                    name="message"
+                    required
+                    className="w-full bg-surface-container-low/50 border-0 border-b border-outline-variant text-on-surface font-mono placeholder:text-on-surface-variant/50 focus:ring-0 focus:border-primary transition-all py-3 px-2 resize-none outline-none focus:bg-primary/5"
+                    placeholder="ENTER_DATA_STREAM_HERE..."
+                    rows={4}
+                  ></textarea>
                   <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-focus-within:w-full transition-all duration-500"></div>
                 </div>
               </div>
-            </div>
-            <div className="space-y-2 group">
-              <label className="font-mono text-[10px] text-primary tracking-widest uppercase block group-focus-within:text-white transition-colors">ENCRYPTED_MESSAGE</label>
-              <div className="relative">
-                <textarea className="w-full bg-surface-container-low/50 border-0 border-b border-outline-variant text-on-surface font-mono placeholder:text-on-surface-variant/50 focus:ring-0 focus:border-primary transition-all py-3 px-2 resize-none outline-none focus:bg-primary/5" placeholder="ENTER_DATA_STREAM_HERE..." rows={4}></textarea>
-                <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-focus-within:w-full transition-all duration-500"></div>
+
+              {/* Error message */}
+              {status === 'error' && (
+                <p className="font-mono text-[11px] text-tertiary tracking-wider border border-tertiary/30 bg-tertiary/5 px-4 py-2">
+                  ⚠ TRANSMISSION_ERROR: {errorMsg || 'CHECK_CONNECTION_AND_RETRY'}
+                </p>
+              )}
+
+              <div className="pt-4 mt-8">
+                <button
+                  type="submit"
+                  disabled={status === 'sending'}
+                  className="group relative w-full py-4 bg-primary text-[#00363a] font-headline font-black text-lg tracking-[0.3em] overflow-hidden hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <span className="relative z-10 block group-hover:scale-105 transition-transform duration-300">
+                    {status === 'sending' ? 'TRANSMITTING...' : 'INITIATE_UPLINK'}
+                  </span>
+                  <div className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
+                </button>
               </div>
-            </div>
-            <div className="pt-4 mt-8">
-              <button type="submit" className="group relative w-full py-4 bg-primary text-[#00363a] font-headline font-black text-lg tracking-[0.3em] overflow-hidden hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] transition-all cursor-pointer">
-                <span className="relative z-10 block group-hover:scale-105 transition-transform duration-300">INITIATE_UPLINK</span>
-                <div className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
-              </button>
-            </div>
-          </form>
+            </form>
+          )}
 
           {/* Terminal Readout Meta */}
           <div className="mt-12 pt-6 border-t border-outline-variant/30 flex flex-wrap items-center justify-between gap-6 font-mono text-[9px] text-outline uppercase relative z-10">
             <div className="flex gap-8">
               <div className="flex items-center space-x-3">
-                <span className="w-2 h-2 bg-[#8bfc6e] animate-pulse shadow-[0_0_8px_#8bfc6e]"></span>
-                <span className="opacity-80">NODE_STABLE</span>
+                <span className={`w-2 h-2 animate-pulse ${status === 'sending' ? 'bg-yellow-400 shadow-[0_0_8px_#facc15]' : status === 'error' ? 'bg-tertiary shadow-[0_0_8px_#ff75f6]' : 'bg-[#8bfc6e] shadow-[0_0_8px_#8bfc6e]'}`}></span>
+                <span className="opacity-80">{status === 'sending' ? 'TRANSMITTING' : status === 'error' ? 'UPLINK_FAILED' : 'NODE_STABLE'}</span>
               </div>
               <div className="opacity-80">BUFFER: 4096KB</div>
               <div className="opacity-80">TRANS_ID: <span className="text-on-surface font-bold">#4491-00-XC</span></div>
             </div>
-            <div className="text-primary animate-pulse tracking-widest font-bold">PENDING_USER_INPUT...</div>
+            <div className={`tracking-widest font-bold animate-pulse ${status === 'sending' ? 'text-yellow-400' : 'text-primary'}`}>
+              {status === 'sending' ? 'TRANSMITTING_DATA...' : 'PENDING_USER_INPUT...'}
+            </div>
           </div>
         </div>
 
