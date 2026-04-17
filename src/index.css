@@ -226,4 +226,9 @@
   .btn-cyberpunk:hover {
     animation: btn-glitch 0.5s infinite steps(1);
   }
+
+  .terminal-caret {
+    caret-color: var(--color-primary);
+    caret-shape: block;
+  }
 }

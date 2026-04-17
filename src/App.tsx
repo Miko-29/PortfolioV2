@@ -1237,6 +1237,30 @@ function ContactModal({ onClose }: { onClose: () => void }) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Typing placeholders state
+  const [ph1, setPh1] = useState('');
+  const [ph2, setPh2] = useState('');
+  const [ph3, setPh3] = useState('');
+
+  useEffect(() => {
+    const t1 = "GUEST_IDENTITY";
+    const t2 = "ENCRYPTED_ADR@PROTO.CY";
+    const t3 = "ENTER_DATA_STREAM_HERE...";
+    let i1 = 0, i2 = 0, i3 = 0;
+    
+    const timer = setInterval(() => {
+      let active = false;
+      if (i1 < t1.length) { setPh1(t1.slice(0, i1 + 1) + '█'); i1++; active = true; }
+      else if (i1 === t1.length && i2 === 0) { setPh1(t1); setPh2('█'); i2++; active = true; }
+      else if (i2 < t2.length) { setPh2(t2.slice(0, i2 + 1) + '█'); i2++; active = true; }
+      else if (i2 === t2.length && i3 === 0) { setPh2(t2); setPh3('█'); i3++; active = true; }
+      else if (i3 < t3.length) { setPh3(t3.slice(0, i3 + 1) + '█'); i3++; active = true; }
+      else { setPh3(t3); clearInterval(timer); }
+    }, 40);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formRef.current) return;
@@ -1317,8 +1341,8 @@ function ContactModal({ onClose }: { onClose: () => void }) {
                     <input
                       name="name"
                       required
-                      className="w-full bg-surface-container-low/50 border-0 border-b border-outline-variant text-on-surface font-mono placeholder:text-on-surface-variant/50 focus:ring-0 focus:border-primary transition-all py-3 px-2 outline-none focus:bg-primary/5"
-                      placeholder="GUEST_IDENTITY"
+                      className="w-full bg-surface-container-low/50 border-0 border-b border-outline-variant text-on-surface font-mono placeholder:text-on-surface-variant/50 focus:ring-0 focus:border-primary transition-all py-3 px-2 outline-none focus:bg-primary/5 terminal-caret"
+                      placeholder={ph1}
                       type="text"
                     />
                     <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-focus-within:w-full transition-all duration-500"></div>
@@ -1330,8 +1354,8 @@ function ContactModal({ onClose }: { onClose: () => void }) {
                     <input
                       name="email"
                       required
-                      className="w-full bg-surface-container-low/50 border-0 border-b border-outline-variant text-on-surface font-mono placeholder:text-on-surface-variant/50 focus:ring-0 focus:border-primary transition-all py-3 px-2 outline-none focus:bg-primary/5"
-                      placeholder="ENCRYPTED_ADR@PROTO.CY"
+                      className="w-full bg-surface-container-low/50 border-0 border-b border-outline-variant text-on-surface font-mono placeholder:text-on-surface-variant/50 focus:ring-0 focus:border-primary transition-all py-3 px-2 outline-none focus:bg-primary/5 terminal-caret"
+                      placeholder={ph2}
                       type="email"
                     />
                     <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-focus-within:w-full transition-all duration-500"></div>
@@ -1344,8 +1368,8 @@ function ContactModal({ onClose }: { onClose: () => void }) {
                   <textarea
                     name="message"
                     required
-                    className="w-full bg-surface-container-low/50 border-0 border-b border-outline-variant text-on-surface font-mono placeholder:text-on-surface-variant/50 focus:ring-0 focus:border-primary transition-all py-3 px-2 resize-none outline-none focus:bg-primary/5"
-                    placeholder="ENTER_DATA_STREAM_HERE..."
+                    className="w-full bg-surface-container-low/50 border-0 border-b border-outline-variant text-on-surface font-mono placeholder:text-on-surface-variant/50 focus:ring-0 focus:border-primary transition-all py-3 px-2 resize-none outline-none focus:bg-primary/5 terminal-caret"
+                    placeholder={ph3}
                     rows={4}
                   ></textarea>
                   <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary group-focus-within:w-full transition-all duration-500"></div>
