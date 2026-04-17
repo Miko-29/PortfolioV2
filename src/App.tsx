@@ -40,6 +40,7 @@ import intouchIcon from './assets/intouch_icon.png';
 import pomodoroIcon from './assets/pomodoro_icon.png';
 import intouchImage from './assets/Intouch.png';
 import pomodoroImage from './assets/pomodoro.png';
+import neuralLinkImage from './assets/neuralink.png';
 import resumePDF from './assets/Muskan_Kumari_Frontend_Resume.pdf';
 
 type Section = 'MISSION_LOG' | 'DISTRICT_01' | 'SECTOR_X' | 'INTEL';
@@ -368,13 +369,15 @@ function HeroSection({ onDive }: { onDive: () => void }) {
       className="relative h-[calc(100vh-64px)] w-full flex items-center justify-center overflow-hidden"
     >
       {/* Background Imagery */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 overflow-hidden">
         <img
           src={cityImage}
           alt="Cyberpunk City"
-          className="w-full h-full object-cover scale-110 blur-[2px] brightness-[0.3]"
+          className="w-full h-full object-cover brightness-[0.25]"
+          style={{ imageRendering: 'auto' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-background/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 to-transparent" />
       </div>
 
       {/* Central Content */}
@@ -478,7 +481,7 @@ function HeroSection({ onDive }: { onDive: () => void }) {
   );
 }
 
-function SocialIconLink({ href, icon, label, glowColor, borderColor }: { href: string, icon: React.ReactNode, label: string, glowColor: string, borderColor: string }) {
+function SocialIconLink({ href, icon, label, glowColor, borderColor }: { key?: React.Key, href: string, icon: React.ReactNode, label: string, glowColor: string, borderColor: string }) {
   const [hovered, setHovered] = useState(false);
   const style = hovered
     ? { borderColor, boxShadow: `0 0 14px ${glowColor}`, color: borderColor }
@@ -508,13 +511,15 @@ function AboutSection() {
       className="relative min-h-[calc(100vh-64px)] w-full overflow-hidden"
     >
       {/* Background Imagery */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 to-background/80 z-10" />
+      <div className="absolute inset-0 z-0 overflow-hidden">
         <img
           src={buildingImage}
           alt="Building Background"
-          className="w-full h-full object-cover opacity-50"
+          className="w-full h-full object-cover brightness-[0.25]"
+          style={{ imageRendering: 'auto' }}
         />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background/80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10 p-8 md:p-12">
@@ -549,8 +554,9 @@ function AboutSection() {
               <div className="bg-surface-container-high p-6 relative overflow-hidden">
                 <img
                   src={muskanImage}
-                  className="w-full aspect-square object-cover mix-blend-luminosity brightness-110 mb-6 border border-primary/20"
+                  className="w-full aspect-square object-cover grayscale-[50%] hover:grayscale-0 transition-all duration-500 brightness-110 mb-6 border border-primary/20"
                   alt="Muskan Profile"
+                  style={{ imageRendering: 'auto' }}
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute top-4 right-4 bg-primary/20 px-2 py-1 text-[10px] text-primary border border-primary/40 backdrop-blur-md font-mono">LIVE_FEED</div>
@@ -625,7 +631,7 @@ function AboutSection() {
             <div className="bg-surface-container-low backdrop-blur-md p-6 border-t border-primary/10">
               <h3 className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-outline mb-4">// LOG.01_MISSION_STATEMENT</h3>
               <p className="font-body text-sm leading-relaxed text-on-surface/75">
-                Frontend Engineer with 2+ years of experience building enterprise-grade fleet and transit platforms serving 200,000+ users and 50,000+ live vehicles. Specialized in Angular, Ionic, RxJS, and NgRx, with a track record of 30–70% performance improvements through offline-first architecture, intelligent caching, and real-time data optimization.
+                Playing computer games at five years old ignited my curiosity about the invisible magic behind the glowing screen. By 13, that fascination turned into action as I began writing my own code, and I grew my roots in the pure logic of system building. Today, that same childhood wonder drives my craft as an engineer, fueling my relentless passion to solve complex puzzles and architect elegant solutions from the ground up.
               </p>
             </div>
 
@@ -789,8 +795,22 @@ function ProjectsSection() {
         '--mouse-y': '0px',
       } as React.CSSProperties}
     >
+      {/* Background Imagery */}
+      <div className="absolute inset-0 z-0">
+        <div className="sticky top-0 h-screen w-full overflow-hidden">
+          <img
+            src={neuralLinkImage}
+            alt="Neural Link Background"
+            className="w-full h-full object-cover object-[center_15%] brightness-[0.2]"
+            style={{ imageRendering: 'auto' }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background/80" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
+        </div>
+      </div>
+
       {/* Interactive Grid Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
+      <div className="absolute inset-0 z-1 pointer-events-none opacity-20">
         <div
           className="absolute inset-0"
           style={{
@@ -901,6 +921,7 @@ function ProjectCard({ title, category, icon, image, description, tags, color, s
           <img
             src={image}
             className="w-full h-full object-cover"
+            style={{ imageRendering: 'auto' }}
             alt={title}
             referrerPolicy="no-referrer"
           />
@@ -929,21 +950,21 @@ function ProjectCard({ title, category, icon, image, description, tags, color, s
             const t = tag.toUpperCase();
             let icon = null;
             switch (t) {
-              case 'ANGULAR': icon = <SiAngular size={size} color="#DD0031" className="shrink-0" />; break;
-              case 'IONIC': icon = <SiIonic size={size} color="#3880FF" className="shrink-0" />; break;
-              case 'TYPESCRIPT': icon = <SiTypescript size={size} color="#3178C6" className="shrink-0" />; break;
-              case 'JAVASCRIPT': icon = <SiJavascript size={size} color="#F7DF1E" className="shrink-0" />; break;
-              case 'REACT': icon = <SiReact size={size} color="#61DAFB" className="shrink-0" />; break;
-              case 'TAILWIND': icon = <SiTailwindcss size={size} color="#06B6D4" className="shrink-0" />; break;
-              case 'HTML5': icon = <SiHtml5 size={size} color="#E34F26" className="shrink-0" />; break;
+              case 'ANGULAR': icon = <SiAngular size={size} color="#DD0031" />; break;
+              case 'IONIC': icon = <SiIonic size={size} color="#3880FF" />; break;
+              case 'TYPESCRIPT': icon = <SiTypescript size={size} color="#3178C6" />; break;
+              case 'JAVASCRIPT': icon = <SiJavascript size={size} color="#F7DF1E" />; break;
+              case 'REACT': icon = <SiReact size={size} color="#61DAFB" />; break;
+              case 'TAILWIND': icon = <SiTailwindcss size={size} color="#06B6D4" />; break;
+              case 'HTML5': icon = <SiHtml5 size={size} color="#E34F26" />; break;
               case 'SCSS':
-              case 'CSS': icon = <SiCss size={size} color="#1572B6" className="shrink-0" />; break;
+              case 'CSS': icon = <SiCss size={size} color="#1572B6" />; break;
               case 'NGRX': icon = <Share2 size={size} color="#00DBE9" className="shrink-0" />; break;
-              case 'SQLITE': icon = <SiSqlite size={size} color="#003B57" className="shrink-0" />; break;
-              case 'CAPACITOR': icon = <SiCapacitor size={size} color="#119EFF" className="shrink-0" />; break;
+              case 'SQLITE': icon = <SiSqlite size={size} color="#003B57" />; break;
+              case 'CAPACITOR': icon = <SiCapacitor size={size} color="#119EFF" />; break;
               case 'INDEXEDDB': icon = <Database size={size} color="#00DBE9" className="shrink-0" />; break;
-              case 'ECHARTS': icon = <SiApacheecharts size={size} color="#AA344D" className="shrink-0" />; break;
-              case 'FIREBASE': icon = <SiFirebase size={size} color="#FFCA28" className="shrink-0" />; break;
+              case 'ECHARTS': icon = <SiApacheecharts size={size} color="#AA344D" />; break;
+              case 'FIREBASE': icon = <SiFirebase size={size} color="#FFCA28" />; break;
               case 'MAPPLS MAPS': icon = <Map size={size} className={cn(textColor, "shrink-0")} />; break;
             }
             return (
@@ -967,47 +988,39 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
       exit={{ opacity: 0, y: -20 }}
       className="relative min-h-[calc(100vh-64px)] w-full overflow-hidden"
     >
-      {/* Skyscraper Perspective Grid */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-20 overflow-hidden translate-y-10">
-        <svg width="100%" height="100%" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="grid-fade" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="rgba(0, 240, 255, 0)" />
-              <stop offset="100%" stopColor="rgba(0, 240, 255, 0.2)" />
-            </linearGradient>
-          </defs>
-          {/* Vertical converging lines (Skyscraper beams) */}
-          {Array.from({ length: 24 }).map((_, i) => {
-            const xPos = (i / 23) * 100;
-            return (
-              <line
-                key={`v-${i}`}
-                x1={`${xPos}%`}
-                y1="100%"
-                x2="50%"
-                y2="-150%"
-                stroke="url(#grid-fade)"
-                strokeWidth="1"
-              />
-            );
-          })}
-          {/* Horizontal floor bands (Increasing spacing downwards) */}
-          {Array.from({ length: 20 }).map((_, i) => {
-            const progress = i / 19;
-            const yPos = Math.pow(progress, 1.8) * 105; // Curve for better perspective
-            return (
-              <line
-                key={`h-${i}`}
-                x1="0"
-                y1={`${yPos}%`}
-                x2="100%"
-                y2={`${yPos}%`}
-                stroke="rgba(0, 240, 255, 0.06)"
-                strokeWidth="1"
-              />
-            );
-          })}
-        </svg>
+      {/* 3D Skyscraper Chasm (Worm's Eye View) */}
+      <div 
+        className="absolute inset-0 z-0 pointer-events-none opacity-25 overflow-hidden flex items-center justify-center"
+        style={{ perspective: '800px' }}
+      >
+        <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
+          {/* North Skyscraper Wall (Top) */}
+          <div className="absolute inset-x-[-100vw] h-[200vw] top-0 origin-top" style={{
+            backgroundImage: 'linear-gradient(rgba(0,240,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.4) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+            transform: 'rotateX(-90deg)',
+          }} />
+          {/* South Skyscraper Wall (Bottom) */}
+          <div className="absolute inset-x-[-100vw] h-[200vw] bottom-0 origin-bottom" style={{
+            backgroundImage: 'linear-gradient(rgba(0,240,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.4) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+            transform: 'rotateX(90deg)',
+          }} />
+          {/* West Skyscraper Wall (Left) */}
+          <div className="absolute inset-y-[-100vh] w-[200vh] left-0 origin-left" style={{
+            backgroundImage: 'linear-gradient(rgba(0,240,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.4) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+            transform: 'rotateY(90deg)',
+          }} />
+          {/* East Skyscraper Wall (Right) */}
+          <div className="absolute inset-y-[-100vh] w-[200vh] right-0 origin-right" style={{
+            backgroundImage: 'linear-gradient(rgba(0,240,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.4) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+            transform: 'rotateY(-90deg)',
+          }} />
+        </div>
+        {/* Center Vanishing Point Fade out so lines don't get infinitely messy */}
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at center, transparent 0%, var(--color-background) 70%)' }} />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10 p-8 md:p-12">
@@ -1049,8 +1062,16 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
           <ExperienceItem
             title="SOFTWARE ENGINEER"
             company="MapMyIndia"
-            description="Leading frontend development for enterprise fleet mapping platforms. Handling high-frequency live data streams for 50,000+ vehicles using NgRx and RxJS observables. Standardized 100+ REST APIs, and upgraded ecosystem from Angular v14 to v19."
-            points={['CHROME_DEVTOOLS_30%_SPEEDUP', 'RXJS_TELEMETRY_PIPELINES', 'INDEXEDDB_CACHING_NODE']}
+            description="Led frontend development for enterprise fleet and transit platforms serving government and commercial clients, supporting real-time operations for 200,000+ end users. Built scalable Angular/Ionic apps handling high-frequency live data for 50,000+ vehicles using RxJS and NgRx, integrated 100+ REST APIs with shared interceptor layers, and drove performance, scalability, and cross-functional Agile delivery."
+            points={[
+              'ANGULAR_v14→v19_STANDALONE_UPGRADE',
+              '200K+_USERS_/_50K+_LIVE_VEHICLES',
+              '100+_REST_APIs_INTERCEPTOR_LAYER',
+              'LIGHTHOUSE_30%_LOAD_TIME_REDUCTION',
+              'NGRX_STATE_PATTERNS_/_REUSABLE_LIBS',
+              'RXJS_OBSERVABLES_TELEMETRY_PIPELINES',
+              'AGILE_SCRUM_MULTI_TRACK_DELIVERY',
+            ]}
             image={office1Image}
             icon={<BarChart3 className="w-6 h-6" />}
             side="left"
@@ -1074,14 +1095,14 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
               degree="MASTER OF COMPUTER APP"
               university="Manipal University Jaipur"
               period="2024 - 2026 (EXPECTED)"
-              focus="Advanced Enterprise Architecture & Scalable Systems"
+              focus="Cybersecurity, Network Security, Cryptography & Ethical Hacking"
               color="cyan"
             />
             <EducationCard
               degree="BSC COMPUTER APP"
               university="St. Xavier's College, Ranchi"
               period="2020 - 2023"
-              focus="Foundational CS & Object Oriented Design"
+              focus="Core Computer Science, Object-Oriented Programming, & System Fundamentals"
               grade="CGPA: 8.41 / 10"
               color="pink"
             />
@@ -1164,9 +1185,10 @@ function ExperienceItem({ title, company, description, points, image, icon, side
           <img
             src={image}
             className={cn(
-              "w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 opacity-90 scale-[1.2]",
+              "w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 opacity-90",
               side === 'left' ? "skew-x-[12deg]" : "skew-x-[-12deg]"
             )}
+            style={{ imageRendering: 'auto' }}
             alt={company}
             referrerPolicy="no-referrer"
           />
