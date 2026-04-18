@@ -997,39 +997,38 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
       exit={{ opacity: 0, y: -20 }}
       className="relative min-h-[calc(100vh-64px)] w-full overflow-hidden"
     >
-      {/* 3D Skyscraper Chasm (Worm's Eye View) */}
-      <div 
-        className="absolute inset-0 z-0 pointer-events-none opacity-25 overflow-hidden flex items-center justify-center"
-        style={{ perspective: '800px' }}
-      >
-        <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
-          {/* North Skyscraper Wall (Top) */}
-          <div className="absolute inset-x-[-100vw] h-[200vw] top-0 origin-top" style={{
-            backgroundImage: 'linear-gradient(rgba(0,240,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.4) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-            transform: 'rotateX(-90deg)',
-          }} />
-          {/* South Skyscraper Wall (Bottom) */}
-          <div className="absolute inset-x-[-100vw] h-[200vw] bottom-0 origin-bottom" style={{
-            backgroundImage: 'linear-gradient(rgba(0,240,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.4) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-            transform: 'rotateX(90deg)',
-          }} />
-          {/* West Skyscraper Wall (Left) */}
-          <div className="absolute inset-y-[-100vh] w-[200vh] left-0 origin-left" style={{
-            backgroundImage: 'linear-gradient(rgba(0,240,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.4) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-            transform: 'rotateY(90deg)',
-          }} />
-          {/* East Skyscraper Wall (Right) */}
-          <div className="absolute inset-y-[-100vh] w-[200vh] right-0 origin-right" style={{
-            backgroundImage: 'linear-gradient(rgba(0,240,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.4) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
-            transform: 'rotateY(-90deg)',
-          }} />
-        </div>
-        {/* Center Vanishing Point Fade out so lines don't get infinitely messy */}
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at center, transparent 0%, var(--color-background) 70%)' }} />
+      {/* Lightweight neural grid backdrop */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-40" aria-hidden="true">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(0,240,255,0.08) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0,240,255,0.08) 1px, transparent 1px)
+            `,
+            backgroundSize: '56px 56px',
+          }}
+        />
+        <div
+          className="absolute inset-x-0 top-0 h-[38vh]"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(0,240,255,0.12), transparent)',
+            clipPath: 'polygon(0 0, 100% 0, 68% 100%, 32% 100%)',
+          }}
+        />
+        <div
+          className="absolute inset-x-0 bottom-0 h-[34vh]"
+          style={{
+            background: 'linear-gradient(to top, rgba(0,240,255,0.09), transparent)',
+            clipPath: 'polygon(18% 0, 82% 0, 100% 100%, 0 100%)',
+          }}
+        />
+        <div className="absolute inset-y-0 left-0 w-[22vw] bg-gradient-to-r from-primary/12 to-transparent" />
+        <div className="absolute inset-y-0 right-0 w-[22vw] bg-gradient-to-l from-primary/12 to-transparent" />
+        <div
+          className="absolute inset-0"
+          style={{ background: 'radial-gradient(circle at center, transparent 0%, var(--color-background) 72%)' }}
+        />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10 p-4 sm:p-6 md:p-12">
