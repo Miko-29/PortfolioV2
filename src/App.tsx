@@ -165,6 +165,12 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const navItems: { section: Section; label: string; icon: React.ReactNode }[] = [
+    { section: 'MISSION_LOG', label: 'Home', icon: <Home className="w-5 h-5" /> },
+    { section: 'DISTRICT_01', label: 'About', icon: <Fingerprint className="w-5 h-5" /> },
+    { section: 'SECTOR_X', label: 'Projects', icon: <GitBranch className="w-5 h-5" /> },
+    { section: 'INTEL', label: 'Experience', icon: <Network className="w-5 h-5" /> },
+  ];
 
   const navigateTo = (section: Section) => {
     if (isTransitioning || activeSection === section) return;
@@ -185,14 +191,14 @@ export default function App() {
       <div className="fixed inset-0 z-[100] scanline-overlay opacity-30 pointer-events-none" />
 
       {/* Top System Header */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-12 bg-black/60 backdrop-blur-md border-b border-primary/20">
-        <div className="flex items-center gap-4">
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-3 sm:px-4 md:px-6 h-12 bg-black/60 backdrop-blur-md border-b border-primary/20">
+        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
           <div className="flex gap-1.5">
             <div className="w-2 h-2 rounded-full bg-red-500/50" />
             <div className="w-2 h-2 rounded-full bg-yellow-500/50" />
             <div className="w-2 h-2 rounded-full bg-green-500/50" />
           </div>
-          <div className="text-[10px] font-black tracking-[0.2em] text-primary/80 font-headline uppercase italic">
+          <div className="hidden sm:block text-[10px] font-black tracking-[0.2em] text-primary/80 font-headline uppercase italic">
             SYSTEM_OS.EXE // <span className="opacity-50 font-medium">V4.0.2</span>
           </div>
           <div className="hidden md:flex items-center gap-3 ml-4 pl-4 border-l border-primary/10">
@@ -203,19 +209,19 @@ export default function App() {
           </div>
         </div>
 
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
-          <Terminal className="w-4 h-4 text-primary animate-pulse" />
-          <h2 className="font-headline text-xs font-bold text-primary tracking-[0.4em] uppercase">
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 md:gap-3 max-w-[42vw] sm:max-w-none">
+          <Terminal className="hidden sm:block w-4 h-4 text-primary animate-pulse" />
+          <h2 className="font-headline text-[10px] sm:text-xs font-bold text-primary tracking-[0.2em] sm:tracking-[0.4em] uppercase truncate">
             {activeSection.replace('_', ' ')}
           </h2>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 sm:gap-6">
           <div className="hidden lg:flex flex-col items-end">
             <span className="text-[8px] font-label text-primary/40 leading-none">CORE_TEMP</span>
             <span className="text-[10px] font-headline text-primary font-bold leading-none">32°C</span>
           </div>
-          <div className="h-6 w-px bg-primary/20" />
+          <div className="hidden sm:block h-6 w-px bg-primary/20" />
           <div className="flex gap-3">
             <Settings className="w-4 h-4 text-primary/60 hover:text-primary cursor-pointer transition-colors" />
             <Power className="w-4 h-4 text-red-500/60 hover:text-red-500 cursor-pointer transition-colors" />
@@ -228,7 +234,7 @@ export default function App() {
         onMouseEnter={() => setIsSidebarOpen(true)}
         onMouseLeave={() => setIsSidebarOpen(false)}
         className={cn(
-          "fixed left-0 top-12 h-[calc(100vh-48px)] z-40 flex flex-col bg-surface-container-low/80 backdrop-blur-md border-r border-primary/20 transition-all duration-500 ease-in-out overflow-hidden",
+          "hidden md:flex fixed left-0 top-12 h-[calc(100vh-48px)] z-40 flex-col bg-surface-container-low/80 backdrop-blur-md border-r border-primary/20 transition-all duration-500 ease-in-out overflow-hidden",
           isSidebarOpen ? "w-64" : "w-20"
         )}
       >
@@ -241,34 +247,16 @@ export default function App() {
         </div>
 
         <div className="flex flex-col w-full flex-grow py-4">
-          <SidebarItem
-            icon={<Home className="w-5 h-5" />}
-            label="Home"
-            active={activeSection === 'MISSION_LOG'}
-            isOpen={isSidebarOpen}
-            onClick={() => navigateTo('MISSION_LOG')}
-          />
-          <SidebarItem
-            icon={<Fingerprint className="w-5 h-5" />}
-            label="About"
-            active={activeSection === 'DISTRICT_01'}
-            isOpen={isSidebarOpen}
-            onClick={() => navigateTo('DISTRICT_01')}
-          />
-          <SidebarItem
-            icon={<GitBranch className="w-5 h-5" />}
-            label="Projects"
-            active={activeSection === 'SECTOR_X'}
-            isOpen={isSidebarOpen}
-            onClick={() => navigateTo('SECTOR_X')}
-          />
-          <SidebarItem
-            icon={<Network className="w-5 h-5" />}
-            label="Experience"
-            active={activeSection === 'INTEL'}
-            isOpen={isSidebarOpen}
-            onClick={() => navigateTo('INTEL')}
-          />
+          {navItems.map(({ section, label, icon }) => (
+            <SidebarItem
+              key={section}
+              icon={icon}
+              label={label}
+              active={activeSection === section}
+              isOpen={isSidebarOpen}
+              onClick={() => navigateTo(section)}
+            />
+          ))}
         </div>
 
         <div className="mt-auto w-full flex flex-col py-6">
@@ -302,7 +290,7 @@ export default function App() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="ml-20 pt-12 min-h-screen relative overflow-hidden">
+      <main className="pt-12 pb-24 md:pb-10 md:ml-20 min-h-screen relative overflow-hidden">
         <AnimatePresence mode="wait">
           {activeSection === 'MISSION_LOG' && <HeroSection key="hero" onDive={handleDive} />}
           {activeSection === 'DISTRICT_01' && <AboutSection key="about" />}
@@ -311,9 +299,30 @@ export default function App() {
         </AnimatePresence>
       </main>
 
+      <nav className="fixed bottom-0 inset-x-0 z-50 md:hidden border-t border-primary/20 bg-black/80 backdrop-blur-md">
+        <div className="grid grid-cols-4">
+          {navItems.map(({ section, label, icon }) => {
+            const active = activeSection === section;
+            return (
+              <button
+                key={section}
+                onClick={() => navigateTo(section)}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1 px-2 py-3 text-[10px] font-headline uppercase tracking-[0.15em] transition-colors",
+                  active ? "text-primary bg-primary/10" : "text-primary/55"
+                )}
+              >
+                {icon}
+                <span className="truncate">{label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
       {/* Global Footer */}
-      <footer className="fixed bottom-0 w-full z-50 flex justify-between items-center px-4 py-1 h-8 bg-black border-t border-secondary/30">
-        <div className="font-headline text-[10px] tracking-[0.2em] font-medium text-secondary animate-pulse">
+      <footer className="hidden md:flex fixed bottom-0 w-full z-50 justify-between items-center px-4 py-1 h-8 bg-black border-t border-secondary/30">
+        <div className="font-headline text-[10px] tracking-[0.2em] font-medium text-secondary animate-pulse truncate pr-4">
           SYS_AUTH: NEURAL_OVERRIDE_V2.0.4 | LATENCY: 12ms | ENC: AES-256 | SCANNING_DISTRICTS...
         </div>
         <div className="flex gap-6">
@@ -329,7 +338,7 @@ export default function App() {
   );
 }
 
-function SidebarItem({ icon, label, active, isOpen, onClick }: { icon: React.ReactNode, label: string, active: boolean, isOpen: boolean, onClick: () => void }) {
+function SidebarItem({ icon, label, active, isOpen, onClick }: { key?: React.Key, icon: React.ReactNode, label: string, active: boolean, isOpen: boolean, onClick: () => void }) {
   return (
     <div
       role="button"
@@ -360,13 +369,13 @@ function SidebarItem({ icon, label, active, isOpen, onClick }: { icon: React.Rea
   );
 }
 
-function HeroSection({ onDive }: { onDive: () => void }) {
+function HeroSection({ onDive }: { key?: React.Key, onDive: () => void }) {
   return (
     <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="relative h-[calc(100vh-64px)] w-full flex items-center justify-center overflow-hidden"
+      className="relative min-h-[calc(100vh-48px)] md:h-[calc(100vh-64px)] w-full flex items-center justify-center overflow-hidden"
     >
       {/* Background Imagery */}
       <div className="absolute inset-0 z-0 overflow-hidden">
@@ -381,7 +390,7 @@ function HeroSection({ onDive }: { onDive: () => void }) {
       </div>
 
       {/* Central Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-5xl">
+      <div className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6 max-w-5xl py-20 sm:py-24">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -395,7 +404,7 @@ function HeroSection({ onDive }: { onDive: () => void }) {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.4, type: 'spring' }}
-          className="font-headline font-black text-7xl md:text-9xl text-primary tracking-tighter uppercase leading-none text-glow-cyan"
+          className="font-headline font-black text-5xl sm:text-7xl md:text-9xl text-primary tracking-tighter uppercase leading-none text-glow-cyan"
         >
           MUSKAN
         </motion.h1>
@@ -406,7 +415,7 @@ function HeroSection({ onDive }: { onDive: () => void }) {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-3 font-headline text-xl md:text-3xl text-tertiary font-bold tracking-[0.3em] uppercase text-glow-magenta"
+          className="mt-3 font-headline text-lg sm:text-xl md:text-3xl text-tertiary font-bold tracking-[0.18em] sm:tracking-[0.3em] uppercase text-glow-magenta"
         >
           FRONTEND ENGINEER
         </motion.h2>
@@ -415,9 +424,9 @@ function HeroSection({ onDive }: { onDive: () => void }) {
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="mt-12 flex flex-col md:flex-row gap-6 justify-center"
+          className="mt-10 sm:mt-12 flex flex-col md:flex-row gap-4 sm:gap-6 justify-center w-full sm:w-auto"
         >
-          <button onClick={onDive} className="btn-cyberpunk relative bg-primary-container text-on-primary-container font-headline font-bold text-lg px-12 py-4 shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:shadow-[0_0_40px_rgba(0,240,255,0.6)] hover:brightness-110 transition-all duration-200 group uppercase tracking-widest">
+          <button onClick={onDive} className="btn-cyberpunk relative w-full sm:w-auto bg-primary-container text-on-primary-container font-headline font-bold text-sm sm:text-lg px-6 sm:px-12 py-4 shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:shadow-[0_0_40px_rgba(0,240,255,0.6)] hover:brightness-110 transition-all duration-200 group uppercase tracking-[0.2em] sm:tracking-widest">
             {/* Glitch layers */}
             <span
               className="glitch-layer-1 absolute inset-0 flex items-center justify-center font-headline font-bold text-lg tracking-widest select-none opacity-0 group-hover:opacity-100"
@@ -444,7 +453,7 @@ function HeroSection({ onDive }: { onDive: () => void }) {
       </div>
 
       {/* HUD Elements */}
-      <div className="absolute left-6 md:left-24 bottom-16 md:bottom-24 z-20 glass-panel p-4 border-l-2 border-primary-container">
+      <div className="hidden sm:block absolute left-6 md:left-24 bottom-16 md:bottom-24 z-20 glass-panel p-4 border-l-2 border-primary-container">
         <div className="flex flex-col gap-3">
           <div className="space-y-1">
             <div className="font-mono text-[10px] text-primary/50 uppercase tracking-widest">Altitude</div>
@@ -463,7 +472,7 @@ function HeroSection({ onDive }: { onDive: () => void }) {
         </div>
       </div>
 
-      <div className="absolute right-6 md:right-12 bottom-16 md:bottom-24 z-20 flex flex-col items-end gap-4 text-right">
+      <div className="hidden sm:flex absolute right-6 md:right-12 bottom-16 md:bottom-24 z-20 flex-col items-end gap-4 text-right">
         <div className="glass-panel p-4 border-r-2 border-tertiary">
           <div className="font-mono text-[10px] text-tertiary/50 uppercase tracking-widest">Mission Status</div>
           <div className="font-headline text-base font-bold text-tertiary tracking-wider">SYNC_STABLE: 98%</div>
@@ -522,20 +531,20 @@ function AboutSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10 p-8 md:p-12">
-        <div className="mb-12 border-l-4 border-primary pl-6 flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+      <div className="max-w-7xl mx-auto relative z-10 p-4 sm:p-6 md:p-12">
+        <div className="mb-10 md:mb-12 border-l-4 border-primary pl-4 sm:pl-6 flex flex-col md:flex-row md:items-start md:justify-between gap-4 sm:gap-6">
           <div>
             <h1 className="font-headline text-4xl md:text-5xl font-black tracking-tight text-white mb-3 uppercase text-glow-cyan">
               SECTOR_X: <span className="text-primary italic">NEURAL PROFILE</span>
             </h1>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
               <span className="bg-secondary/20 text-secondary px-3 py-1 text-[11px] tracking-widest uppercase font-bold font-mono border border-secondary/30">STATUS: OPERATIONAL</span>
               <span className="text-outline text-[11px] tracking-widest uppercase font-mono">ID: MSK_9901_BRAVO</span>
             </div>
           </div>
 
           {/* Social Links — icon row */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {[
               { href: "https://github.com/Miko-29", icon: <SiGithub size={18} />, label: "GitHub", glowColor: "rgba(170,170,170,0.4)", borderColor: "#aaaaaa" },
               { href: "https://www.linkedin.com/in/muskan-kumari-3b5a19222/", icon: <FaLinkedin size={18} />, label: "LinkedIn", glowColor: "rgba(10,102,194,0.4)", borderColor: "#0A66C2" },
@@ -561,7 +570,7 @@ function AboutSection() {
                 />
                 <div className="absolute top-4 right-4 bg-primary/20 px-2 py-1 text-[10px] text-primary border border-primary/40 backdrop-blur-md font-mono">LIVE_FEED</div>
                 <h2 className="font-headline text-xl font-bold uppercase mb-1 tracking-wider text-white italic">MUSKAN</h2>
-                <p className="font-mono text-[11px] text-primary/70 mb-6 leading-relaxed uppercase tracking-widest">Frontend Engineer / MapMyIndia</p>
+                <p className="font-mono text-[11px] text-primary/70 mb-6 leading-relaxed uppercase tracking-widest">Frontend Engineer</p>
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-[10px] uppercase tracking-widest text-secondary">
@@ -628,7 +637,7 @@ function AboutSection() {
             </div>
 
             {/* Mission Statement */}
-            <div className="bg-surface-container-low backdrop-blur-md p-6 border-t border-primary/10">
+            <div className="bg-surface-container-low backdrop-blur-md p-5 sm:p-6 border-t border-primary/10">
               <h3 className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-outline mb-4">// LOG.01_MISSION_STATEMENT</h3>
               <p className="font-body text-sm leading-relaxed text-on-surface/75">
                 Playing computer games at five years old ignited my curiosity about the invisible magic behind the glowing screen. By 13, that fascination turned into action as I began writing my own code, and I grew my roots in the pure logic of system building. Today, that same childhood wonder drives my craft as an engineer, fueling my relentless passion to solve complex puzzles and architect elegant solutions from the ground up.
@@ -636,12 +645,12 @@ function AboutSection() {
             </div>
 
             {/* Footer Activity Monitor */}
-            <div className="bg-surface-container-lowest/60 backdrop-blur-md p-6 border border-tertiary/20 font-mono text-[10px]">
-              <div className="flex items-center justify-between mb-4 border-b border-tertiary/20 pb-2">
+            <div className="bg-surface-container-lowest/60 backdrop-blur-md p-5 sm:p-6 border border-tertiary/20 font-mono text-[10px]">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 border-b border-tertiary/20 pb-2">
                 <span className="text-tertiary uppercase font-bold tracking-widest">ACTIVE_STREAMS_MONITOR</span>
                 <span className="text-outline">REFRESH: 0.5s</span>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="flex flex-col gap-1">
                   <span className="text-outline uppercase">Latency</span>
                   <span className="text-white text-xs">24ms</span>
@@ -834,13 +843,13 @@ function ProjectsSection() {
       </div>
 
 
-      <div className="relative z-10 p-8 md:p-12">
+      <div className="relative z-10 p-4 sm:p-6 md:p-12">
         {/* Background Atmospheric Elements */}
         <div className="absolute top-1/4 -right-20 w-96 h-96 bg-primary/10 blur-[120px] rounded-full"></div>
         <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-secondary/10 blur-[120px] rounded-full"></div>
 
         {/* Central Sphere / Neural Core */}
-        <div className="relative w-full h-[300px] md:h-[400px] flex items-center justify-center pointer-events-none mb-12 opacity-80">
+        <div className="relative w-full h-[220px] sm:h-[300px] md:h-[400px] flex items-center justify-center pointer-events-none mb-10 md:mb-12 opacity-80">
           <div className="absolute w-[200px] md:w-[300px] h-[200px] md:h-[300px] border border-primary/20 rounded-full animate-pulse flex items-center justify-center">
             <div className="w-[150px] md:w-[200px] h-[150px] md:h-[200px] border border-primary/40 rounded-full flex items-center justify-center">
               <div className="w-[100px] md:w-[150px] h-[100px] md:h-[150px] bg-gradient-to-tr from-primary/20 to-secondary/20 backdrop-blur-3xl rounded-full flex items-center justify-center glow-cyan">
@@ -853,7 +862,7 @@ function ProjectsSection() {
           </div>
 
           {/* Floating Data Streams */}
-          <div className="absolute top-0 md:top-10 right-0 md:right-10 flex flex-col items-end gap-2 text-right">
+          <div className="absolute top-0 md:top-10 right-0 md:right-10 hidden sm:flex flex-col items-end gap-2 text-right">
             <span className="font-label text-[10px] text-primary tracking-widest uppercase">Fragment_Stability</span>
             <span className="font-headline text-xl md:text-2xl font-bold text-secondary">99.9%</span>
             <div className="w-24 md:w-32 h-1 bg-surface-container overflow-hidden">
@@ -861,7 +870,7 @@ function ProjectsSection() {
             </div>
           </div>
 
-          <div className="absolute bottom-0 md:bottom-10 left-0 md:left-10 flex flex-col gap-2">
+          <div className="absolute bottom-0 md:bottom-10 left-0 md:left-10 hidden sm:flex flex-col gap-2">
             <span className="font-label text-[10px] text-primary tracking-widest uppercase">Data_Stream_Capacity</span>
             <div className="flex gap-1">
               <div className="w-3 md:w-4 h-4 md:h-6 bg-primary"></div>
@@ -875,7 +884,7 @@ function ProjectsSection() {
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="mb-12 border-l-4 border-primary pl-6">
+          <div className="mb-10 md:mb-12 border-l-4 border-primary pl-4 sm:pl-6">
             <h1 className="font-headline text-4xl md:text-5xl font-black tracking-tight text-white mb-2 uppercase text-glow-cyan">
               SECTOR_X: <span className="text-primary italic">PROJECT_LOGS</span>
             </h1>
@@ -890,14 +899,14 @@ function ProjectsSection() {
       </div>
 
       {/* Background Text Overlay */}
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] select-none pointer-events-none -z-10">
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] select-none pointer-events-none -z-10 hidden md:block">
         <h2 className="font-headline text-[30vw] font-black leading-none whitespace-nowrap">FRAGMENTS</h2>
       </div>
     </motion.section>
   );
 }
 
-function ProjectCard({ title, category, icon, image, description, tags, color, sourceUrl, deployUrl }: { title: string, category: string, icon: React.ReactNode, image: string, description: string, tags: string[], color: 'cyan' | 'pink' | 'secondary', sourceUrl?: string, deployUrl?: string }) {
+function ProjectCard({ title, category, icon, image, description, tags, color, sourceUrl, deployUrl }: { key?: React.Key, title: string, category: string, icon: React.ReactNode, image: string, description: string, tags: string[], color: 'cyan' | 'pink' | 'secondary', sourceUrl?: string, deployUrl?: string }) {
   const borderColor = color === 'cyan' ? 'border-primary' : color === 'pink' ? 'border-tertiary' : 'border-secondary';
   const textColor = color === 'cyan' ? 'text-primary' : color === 'pink' ? 'text-tertiary' : 'text-secondary';
   const glowShadow = color === 'cyan' ? 'hover:shadow-[0_0_40px_rgba(0,219,233,0.25)]' : color === 'pink' ? 'hover:shadow-[0_0_40px_rgba(255,117,246,0.25)]' : 'hover:shadow-[0_0_40px_rgba(139,252,110,0.25)]';
@@ -908,13 +917,13 @@ function ProjectCard({ title, category, icon, image, description, tags, color, s
       borderColor,
       glowShadow
     )}>
-      <div className="p-8">
-        <div className="flex justify-between items-start mb-6">
+      <div className="p-5 sm:p-8">
+        <div className="flex justify-between items-start gap-4 mb-6">
           <div>
             <span className={cn("font-label text-[10px] uppercase tracking-widest", textColor)}>{category}</span>
-            <h3 className="font-headline text-3xl font-black text-on-surface uppercase tracking-tight mt-1">{title}</h3>
+            <h3 className="font-headline text-2xl sm:text-3xl font-black text-on-surface uppercase tracking-tight mt-1">{title}</h3>
           </div>
-          <div className={textColor}>{icon}</div>
+          <div className={cn(textColor, "shrink-0")}>{icon}</div>
         </div>
 
         <div className="aspect-video mb-8 bg-black relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-700">
@@ -926,7 +935,7 @@ function ProjectCard({ title, category, icon, image, description, tags, color, s
             referrerPolicy="no-referrer"
           />
 
-          <div className="absolute bottom-4 left-4 flex gap-3 opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+          <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-3 opacity-100 sm:opacity-40 sm:group-hover:opacity-100 transition-opacity duration-500">
             {sourceUrl && sourceUrl !== '#' && (
               <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className={cn("flex items-center gap-2 px-3 py-1.5 border bg-background/80 backdrop-blur-sm hover:brightness-125 transition-all", borderColor, textColor)}>
                 <Terminal className="w-3.5 h-3.5" />
@@ -1023,8 +1032,8 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
         <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at center, transparent 0%, var(--color-background) 70%)' }} />
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10 p-8 md:p-12">
-        <div className="flex flex-col md:flex-row justify-between items-end border-b border-outline-variant/30 pb-6 mb-20 gap-8">
+      <div className="max-w-7xl mx-auto relative z-10 p-4 sm:p-6 md:p-12">
+        <div className="flex flex-col lg:flex-row justify-between lg:items-end border-b border-outline-variant/30 pb-6 mb-12 md:mb-20 gap-6 md:gap-8">
           <div className="relative">
             <span className="font-mono text-[11px] font-bold text-primary tracking-[0.4em] uppercase block mb-3">// MAPMYINDIA_INTERNAL_LOG</span>
             <h1 className="font-headline text-4xl md:text-5xl font-black tracking-tight text-white mb-2 uppercase text-glow-cyan">
@@ -1033,7 +1042,7 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
             <div className="absolute -left-4 top-0 w-1 h-full bg-primary" />
           </div>
 
-          <div className="glass-panel p-6 border border-primary/20 min-w-[320px]">
+          <div className="glass-panel p-5 sm:p-6 border border-primary/20 w-full lg:w-auto lg:min-w-[320px]">
             <div className="flex justify-between items-center mb-4">
               <span className="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">CAREER_UPTIME: 2+ YEARS</span>
               <span className="font-label text-[10px] text-secondary">STABLE</span>
@@ -1056,7 +1065,7 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
           </div>
         </div>
 
-        <div className="relative space-y-32 pb-12">
+        <div className="relative space-y-16 md:space-y-32 pb-12">
           <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-gradient-to-b from-primary via-outline-variant to-transparent -translate-x-1/2 hidden md:block" />
 
           <ExperienceItem
@@ -1083,7 +1092,7 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
         <div className="mt-4 pt-12 border-t border-primary/20 relative">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-primary to-transparent blur-[2px]" />
 
-          <div className="mb-12 border-l-4 border-tertiary pl-6">
+          <div className="mb-10 md:mb-12 border-l-4 border-tertiary pl-4 sm:pl-6">
             <span className="font-mono text-[11px] font-bold text-tertiary tracking-[0.4em] uppercase block mb-3">// NEURAL_TRAINING_FACILITY</span>
             <h2 className="font-headline text-3xl md:text-5xl font-black tracking-tight text-white mb-2 uppercase text-glow-magenta">
               ACADEMIC <span className="text-tertiary italic">ARCHIVES</span>
@@ -1110,14 +1119,14 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
         </div>
 
         <div className="flex justify-center pt-12">
-          <div className="glass-panel p-10 border border-primary/30 relative max-w-2xl w-full text-center">
+          <div className="glass-panel p-6 sm:p-8 md:p-10 border border-primary/30 relative max-w-2xl w-full text-center">
             <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-primary" />
             <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-primary" />
             <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-primary" />
             <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary" />
             <Terminal className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h4 className="font-headline text-3xl font-bold mb-4 uppercase">Initialize Protocol?</h4>
-            <p className="font-body text-sm text-on-surface-variant mb-8 px-12">Requesting full neural dossier access for the corporate recruitment protocol. Secure channel established.</p>
+            <h4 className="font-headline text-2xl sm:text-3xl font-bold mb-4 uppercase">Initialize Protocol?</h4>
+            <p className="font-body text-sm text-on-surface-variant mb-8 px-0 sm:px-6 md:px-12">Requesting full neural dossier access for the corporate recruitment protocol. Secure channel established.</p>
             <div className="flex flex-col md:flex-row gap-4 justify-center">
               <a
                 href={resumePDF}
@@ -1145,7 +1154,7 @@ function ExperienceItem({ title, company, description, points, image, icon, side
   const bgColor = color === 'cyan' ? 'bg-primary' : color === 'pink' ? 'bg-tertiary' : 'bg-secondary';
 
   return (
-    <div className="relative grid grid-cols-1 md:grid-cols-2 gap-12 items-center my-16">
+    <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center my-12 md:my-16">
       {/* Absolute Icon Block on Far Edge */}
       <div className={cn(
         "hidden md:flex absolute top-8 w-14 h-14 items-center justify-center text-background z-20 shadow-lg",
@@ -1155,38 +1164,38 @@ function ExperienceItem({ title, company, description, points, image, icon, side
         {icon}
       </div>
 
-      <div className={cn("order-2 flex flex-col", side === 'left' ? "md:order-1 items-end text-right" : "md:order-2 items-start text-left")}>
+      <div className={cn("order-2 flex flex-col", side === 'left' ? "md:order-1 md:items-end md:text-right" : "md:order-2 items-start text-left")}>
         <div className="mb-6">
           <h3 className="font-headline text-3xl md:text-4xl font-bold text-white leading-tight uppercase tracking-wider">{title}</h3>
           <p className={cn("font-headline text-sm font-bold tracking-[0.2em] uppercase mt-2", textColor)}>{company}</p>
         </div>
-        <div className={cn("space-y-6 max-w-lg mt-4", side === 'left' ? "items-end" : "items-start")}>
-          <div className={cn("py-2", side === 'left' ? "border-r-[3px] pr-6" : "border-l-[3px] pl-6", borderColor)}>
+        <div className={cn("space-y-6 max-w-lg mt-4 w-full", side === 'left' ? "md:items-end" : "items-start")}>
+          <div className={cn("py-2", side === 'left' ? "border-l-[3px] md:border-l-0 md:border-r-[3px] pl-4 md:pl-0 md:pr-6" : "border-l-[3px] pl-4 md:pl-6", borderColor)}>
             <p className="text-sm md:text-base text-on-surface-variant leading-relaxed opacity-90">{description}</p>
           </div>
           <ul className="font-headline text-xs space-y-3 text-on-surface-variant font-bold tracking-widest">
             {points.map((point, i) => (
-              <li key={i} className={cn("flex items-center gap-3", side === 'left' ? "justify-end" : "justify-start")}>
+              <li key={i} className={cn("flex items-start gap-3", side === 'left' ? "md:justify-end" : "justify-start")}>
                 <span className={textColor}>0{i + 1}</span>
                 <span className="opacity-40">//</span>
-                <span className="opacity-80">{point}</span>
+                <span className="opacity-80 break-all">{point}</span>
               </li>
             ))}
           </ul>
         </div>
       </div>
 
-      <div className={cn("order-1 relative group w-full h-[360px]", side === 'left' ? "md:order-2" : "md:order-1")}>
+      <div className={cn("order-1 relative group w-full h-[260px] sm:h-[320px] md:h-[360px]", side === 'left' ? "md:order-2" : "md:order-1")}>
         <div className={cn(
           "w-full h-full bg-surface-container-high overflow-hidden relative shadow-2xl shadow-black/50 border-primary/50",
-          side === 'left' ? "border-t-[3px] border-r-[3px] skew-x-[-12deg]" : "border-b-[3px] border-l-[3px] skew-x-[12deg]",
+          side === 'left' ? "border-t-[3px] border-r-[3px] md:skew-x-[-12deg]" : "border-b-[3px] border-l-[3px] md:skew-x-[12deg]",
           borderColor
         )}>
           <img
             src={image}
             className={cn(
               "w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 opacity-90",
-              side === 'left' ? "skew-x-[12deg]" : "skew-x-[-12deg]"
+              side === 'left' ? "md:skew-x-[12deg]" : "md:skew-x-[-12deg]"
             )}
             style={{ imageRendering: 'auto' }}
             alt={company}
@@ -1194,24 +1203,24 @@ function ExperienceItem({ title, company, description, points, image, icon, side
           />
           <div className={cn("absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/20", side === 'left' ? "bg-gradient-to-tr" : "bg-gradient-to-tl")} />
 
-          <div className={cn("absolute top-8", side === 'left' ? "left-16" : "right-16")}>
+          <div className={cn("absolute top-4 sm:top-8", side === 'left' ? "left-4 sm:left-16" : "right-4 sm:right-16")}>
             <div className={cn(
-              "px-6 py-2 border bg-background/40 backdrop-blur-md",
+              "px-3 sm:px-6 py-2 border bg-background/40 backdrop-blur-md",
               borderColor,
-              side === 'left' ? "skew-x-[-12deg]" : "skew-x-[12deg]"
+              side === 'left' ? "md:skew-x-[-12deg]" : "md:skew-x-[12deg]"
             )}>
               <span className={cn(
-                "block font-headline text-xl font-bold tracking-wider",
+                "block font-headline text-base sm:text-xl font-bold tracking-wider",
                 textColor,
-                side === 'left' ? "skew-x-[12deg]" : "skew-x-[-12deg]"
+                side === 'left' ? "md:skew-x-[12deg]" : "md:skew-x-[-12deg]"
               )}>{company.replace('Tower ', '')}</span>
             </div>
           </div>
 
-          <div className={cn("absolute bottom-6 opacity-50", side === 'left' ? "right-12" : "left-12")}>
+          <div className={cn("absolute bottom-4 sm:bottom-6 opacity-50", side === 'left' ? "right-4 sm:right-12" : "left-4 sm:left-12")}>
             <span className={cn(
-              "block font-label text-[9px] tracking-[0.25em] uppercase text-white",
-              side === 'left' ? "skew-x-[12deg]" : "skew-x-[-12deg]"
+              "block font-label text-[8px] sm:text-[9px] tracking-[0.18em] sm:tracking-[0.25em] uppercase text-white",
+              side === 'left' ? "md:skew-x-[12deg]" : "md:skew-x-[-12deg]"
             )}>COORDINATES: 40.7128° N, 74.0060° W</span>
           </div>
         </div>
@@ -1290,7 +1299,7 @@ function ContactModal({ onClose }: { onClose: () => void }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4"
     >
       <div className="absolute inset-0 bg-surface/60 backdrop-blur-md" onClick={onClose}></div>
       <motion.div
@@ -1298,19 +1307,19 @@ function ContactModal({ onClose }: { onClose: () => void }) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="relative w-full max-w-4xl bg-[#1a1a1c]/90 border-2 border-primary shadow-[0_0_50px_rgba(0,240,255,0.15)] backdrop-blur-xl overflow-hidden"
+        className="relative w-full max-w-4xl max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-2rem)] overflow-y-auto bg-[#1a1a1c]/90 border-2 border-primary shadow-[0_0_50px_rgba(0,240,255,0.15)] backdrop-blur-xl"
       >
         {/* Corner Accents */}
         <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-primary z-20"></div>
         <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-primary z-20"></div>
 
         {/* Modal Header */}
-        <div className="flex justify-between items-start p-8 pb-0">
+        <div className="flex justify-between items-start gap-4 p-5 sm:p-8 pb-0">
           <div>
-            <h1 className="text-4xl lg:text-5xl font-black font-headline tracking-tighter text-on-surface leading-none opacity-90">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-headline tracking-tighter text-on-surface leading-none opacity-90">
               DISTRICT <span className="text-primary">04</span>
             </h1>
-            <h2 className="text-lg font-headline font-bold text-outline uppercase tracking-tight mt-1">CONTACT_TERMINAL</h2>
+            <h2 className="text-sm sm:text-lg font-headline font-bold text-outline uppercase tracking-tight mt-1">CONTACT_TERMINAL</h2>
           </div>
           <button onClick={onClose} className="flex items-center space-x-2 text-primary hover:text-white transition-colors group z-20 cursor-pointer">
             <span className="font-mono text-[10px] tracking-widest hidden md:block">CLOSE_UPLINK</span>
@@ -1319,7 +1328,7 @@ function ContactModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Terminal Form Body */}
-        <div className="p-8 lg:p-12 relative z-10">
+        <div className="p-5 sm:p-8 lg:p-12 relative z-10">
           {status === 'success' ? (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -1333,8 +1342,8 @@ function ContactModal({ onClose }: { onClose: () => void }) {
               <p className="font-mono text-sm text-on-surface-variant">Message transmitted successfully. Closing terminal in 3s...</p>
             </motion.div>
           ) : (
-            <form ref={formRef} className="space-y-8 relative" onSubmit={handleSubmit}>
-              <div className="grid md:grid-cols-2 gap-8">
+            <form ref={formRef} className="space-y-6 sm:space-y-8 relative" onSubmit={handleSubmit}>
+              <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
                 <div className="space-y-2 group">
                   <label className="font-mono text-[10px] text-primary tracking-widest uppercase block group-focus-within:text-white transition-colors">UPLINK_ID</label>
                   <div className="relative">
@@ -1387,7 +1396,7 @@ function ContactModal({ onClose }: { onClose: () => void }) {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="group relative w-full py-4 bg-primary text-[#00363a] font-headline font-black text-lg tracking-[0.3em] overflow-hidden hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="group relative w-full py-4 bg-primary text-[#00363a] font-headline font-black text-sm sm:text-lg tracking-[0.18em] sm:tracking-[0.3em] overflow-hidden hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <span className="relative z-10 block group-hover:scale-105 transition-transform duration-300">
                     {status === 'sending' ? 'TRANSMITTING...' : 'INITIATE_UPLINK'}
@@ -1399,8 +1408,8 @@ function ContactModal({ onClose }: { onClose: () => void }) {
           )}
 
           {/* Terminal Readout Meta */}
-          <div className="mt-12 pt-6 border-t border-outline-variant/30 flex flex-wrap items-center justify-between gap-6 font-mono text-[9px] text-outline uppercase relative z-10">
-            <div className="flex gap-8">
+          <div className="mt-10 sm:mt-12 pt-6 border-t border-outline-variant/30 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sm:gap-6 font-mono text-[9px] text-outline uppercase relative z-10">
+            <div className="flex flex-wrap gap-4 sm:gap-8">
               <div className="flex items-center space-x-3">
                 <span className={`w-2 h-2 animate-pulse ${status === 'sending' ? 'bg-yellow-400 shadow-[0_0_8px_#facc15]' : status === 'error' ? 'bg-tertiary shadow-[0_0_8px_#ff75f6]' : 'bg-[#8bfc6e] shadow-[0_0_8px_#8bfc6e]'}`}></span>
                 <span className="opacity-80">{status === 'sending' ? 'TRANSMITTING' : status === 'error' ? 'UPLINK_FAILED' : 'NODE_STABLE'}</span>
