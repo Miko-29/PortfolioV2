@@ -223,8 +223,36 @@
     100% { transform: translate(0, 0) skewX(0deg); }
   }
 
+  @keyframes crt-click-aberration {
+    0% {
+      transform: translateX(0);
+      text-shadow: 0 0 0 rgba(255, 82, 82, 0), 0 0 0 rgba(120, 190, 255, 0);
+      filter: drop-shadow(0 0 0 rgba(255, 82, 82, 0)) drop-shadow(0 0 0 rgba(120, 190, 255, 0));
+    }
+    33% {
+      transform: translateX(-1px);
+      text-shadow: 1px 0 0 rgba(255, 82, 82, 0.9), -1px 0 0 rgba(120, 190, 255, 0.9);
+      filter: drop-shadow(1px 0 0 rgba(255, 82, 82, 0.85)) drop-shadow(-1px 0 0 rgba(120, 190, 255, 0.85));
+    }
+    66% {
+      transform: translateX(1px);
+      text-shadow: -1px 0 0 rgba(255, 82, 82, 0.8), 1px 0 0 rgba(120, 190, 255, 0.8);
+      filter: drop-shadow(-1px 0 0 rgba(255, 82, 82, 0.75)) drop-shadow(1px 0 0 rgba(120, 190, 255, 0.75));
+    }
+    100% {
+      transform: translateX(0);
+      text-shadow: 0 0 0 rgba(255, 82, 82, 0), 0 0 0 rgba(120, 190, 255, 0);
+      filter: drop-shadow(0 0 0 rgba(255, 82, 82, 0)) drop-shadow(0 0 0 rgba(120, 190, 255, 0));
+    }
+  }
+
   .btn-cyberpunk:hover {
     animation: btn-glitch 0.5s infinite steps(1);
+  }
+
+  .crt-click-glitch {
+    animation: crt-click-aberration 70ms steps(2) 1;
+    will-change: transform, text-shadow, filter;
   }
 
   .terminal-caret {

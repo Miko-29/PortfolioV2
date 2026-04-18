@@ -301,22 +301,15 @@ export default function App() {
 
       <nav className="fixed bottom-0 inset-x-0 z-50 md:hidden border-t border-primary/20 bg-black/80 backdrop-blur-md">
         <div className="grid grid-cols-4">
-          {navItems.map(({ section, label, icon }) => {
-            const active = activeSection === section;
-            return (
-              <button
-                key={section}
-                onClick={() => navigateTo(section)}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-1 px-2 py-3 text-[10px] font-headline uppercase tracking-[0.15em] transition-colors",
-                  active ? "text-primary bg-primary/10" : "text-primary/55"
-                )}
-              >
-                {icon}
-                <span className="truncate">{label}</span>
-              </button>
-            );
-          })}
+          {navItems.map(({ section, label, icon }) => (
+            <MobileNavItem
+              key={section}
+              icon={icon}
+              label={label}
+              active={activeSection === section}
+              onClick={() => navigateTo(section)}
+            />
+          ))}
         </div>
       </nav>
 
@@ -339,10 +332,26 @@ export default function App() {
 }
 
 function SidebarItem({ icon, label, active, isOpen, onClick }: { key?: React.Key, icon: React.ReactNode, label: string, active: boolean, isOpen: boolean, onClick: () => void }) {
+  const [isGlitching, setIsGlitching] = useState(false);
+  const glitchTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (glitchTimeoutRef.current) window.clearTimeout(glitchTimeoutRef.current);
+    };
+  }, []);
+
+  const triggerClickFeedback = () => {
+    if (glitchTimeoutRef.current) window.clearTimeout(glitchTimeoutRef.current);
+    setIsGlitching(true);
+    glitchTimeoutRef.current = window.setTimeout(() => setIsGlitching(false), 70);
+    onClick();
+  };
+
   return (
     <div
       role="button"
-      onClick={onClick}
+      onClick={triggerClickFeedback}
       className={cn(
         "flex items-center h-14 transition-all duration-300 border-l-4 group relative overflow-hidden",
         active
@@ -353,6 +362,7 @@ function SidebarItem({ icon, label, active, isOpen, onClick }: { key?: React.Key
       <div className="w-20 flex items-center justify-center flex-shrink-0">
         <div className={cn(
           "transition-transform duration-500",
+          isGlitching && "crt-click-glitch",
           isOpen ? "scale-110" : "scale-100",
           active && "scale-110 drop-shadow-[0_0_8px_rgba(0,240,255,0.4)]"
         )}>
@@ -361,12 +371,175 @@ function SidebarItem({ icon, label, active, isOpen, onClick }: { key?: React.Key
       </div>
       <span className={cn(
         "font-headline text-xs font-bold uppercase tracking-widest transition-all duration-500 whitespace-nowrap",
+        isGlitching && "crt-click-glitch",
         isOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 pointer-events-none"
       )}>
         {label}
       </span>
     </div>
   );
+}
+
+function MobileNavItem({ icon, label, active, onClick }: { key?: React.Key, icon: React.ReactNode, label: string, active: boolean, onClick: () => void }) {
+  const [isGlitching, setIsGlitching] = useState(false);
+  const glitchTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (glitchTimeoutRef.current) window.clearTimeout(glitchTimeoutRef.current);
+    };
+  }, []);
+
+  const triggerClickFeedback = () => {
+    if (glitchTimeoutRef.current) window.clearTimeout(glitchTimeoutRef.current);
+    setIsGlitching(true);
+    glitchTimeoutRef.current = window.setTimeout(() => setIsGlitching(false), 70);
+    onClick();
+  };
+
+  return (
+    <button
+      onClick={triggerClickFeedback}
+      className={cn(
+        "flex flex-col items-center justify-center gap-1 px-2 py-3 text-[10px] font-headline uppercase tracking-[0.15em] transition-colors",
+        active ? "text-primary bg-primary/10" : "text-primary/55"
+      )}
+    >
+      <span className={cn("flex items-center justify-center", isGlitching && "crt-click-glitch")}>{icon}</span>
+      <span className={cn("truncate", isGlitching && "crt-click-glitch")}>{label}</span>
+    </button>
+  );
+}
+
+function MagneticCTA({
+  children,
+  className,
+  radius = 140,
+  strength = 12,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  radius?: number;
+  strength?: number;
+}) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = wrapperRef.current;
+    if (!element || !window.matchMedia('(pointer: fine)').matches) return;
+
+    let frameId = 0;
+
+    const reset = () => {
+      element.style.transform = 'translate3d(0px, 0px, 0px)';
+    };
+
+    const onMove = (event: MouseEvent) => {
+      if (frameId) cancelAnimationFrame(frameId);
+
+      frameId = requestAnimationFrame(() => {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const deltaX = event.clientX - centerX;
+        const deltaY = event.clientY - centerY;
+        const distance = Math.hypot(deltaX, deltaY);
+
+        if (distance > radius) {
+          reset();
+          return;
+        }
+
+        const pull = (1 - distance / radius) * strength;
+        const translateX = (deltaX / radius) * pull;
+        const translateY = (deltaY / radius) * pull;
+
+        element.style.transform = `translate3d(${translateX.toFixed(2)}px, ${translateY.toFixed(2)}px, 0)`;
+      });
+    };
+
+    const onLeave = () => {
+      if (frameId) cancelAnimationFrame(frameId);
+      reset();
+    };
+
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseleave', onLeave);
+
+    return () => {
+      if (frameId) cancelAnimationFrame(frameId);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseleave', onLeave);
+      reset();
+    };
+  }, [radius, strength]);
+
+  return (
+    <div
+      ref={wrapperRef}
+      className={cn("inline-block transition-transform duration-200 ease-out will-change-transform", className)}
+    >
+      {children}
+    </div>
+  );
+}
+
+function DecryptText({
+  text,
+  className,
+  trigger,
+  runOnMount = false,
+  duration = 420,
+}: {
+  text: string;
+  className?: string;
+  trigger?: string | number | boolean;
+  runOnMount?: boolean;
+  duration?: number;
+}) {
+  const [displayText, setDisplayText] = useState(text);
+  const hasMountedRef = useRef(false);
+
+  useEffect(() => {
+    const shouldRun = runOnMount || hasMountedRef.current;
+    hasMountedRef.current = true;
+
+    if (!shouldRun) {
+      setDisplayText(text);
+      return;
+    }
+
+    const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*+-=?<>[]{}';
+    const target = text.toUpperCase();
+    const totalFrames = Math.max(8, Math.floor(duration / 32));
+    let frame = 0;
+
+    const interval = window.setInterval(() => {
+      frame += 1;
+      const progress = frame / totalFrames;
+      const revealCount = Math.floor(target.length * progress);
+
+      const nextText = target
+        .split('')
+        .map((char, index) => {
+          if (char === ' ') return ' ';
+          if (index < revealCount) return target[index];
+          return glyphs[Math.floor(Math.random() * glyphs.length)];
+        })
+        .join('');
+
+      setDisplayText(nextText);
+
+      if (frame >= totalFrames) {
+        window.clearInterval(interval);
+        setDisplayText(target);
+      }
+    }, 32);
+
+    return () => window.clearInterval(interval);
+  }, [duration, runOnMount, text, trigger]);
+
+  return <span className={className}>{displayText}</span>;
 }
 
 function HeroSection({ onDive }: { key?: React.Key, onDive: () => void }) {
@@ -535,7 +708,8 @@ function AboutSection() {
         <div className="mb-10 md:mb-12 border-l-4 border-primary pl-4 sm:pl-6 flex flex-col md:flex-row md:items-start md:justify-between gap-4 sm:gap-6">
           <div>
             <h1 className="font-headline text-4xl md:text-5xl font-black tracking-tight text-white mb-3 uppercase text-glow-cyan">
-              SECTOR_X: <span className="text-primary italic">NEURAL PROFILE</span>
+              SECTOR_X:{' '}
+              <DecryptText text="NEURAL PROFILE" runOnMount className="text-primary italic" />
             </h1>
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
               <span className="bg-secondary/20 text-secondary px-3 py-1 text-[11px] tracking-widest uppercase font-bold font-mono border border-secondary/30">STATUS: OPERATIONAL</span>
@@ -675,6 +849,7 @@ function AboutSection() {
 
 function TechCard({ icon, title, subtitle, brandColor = '#00DBE9', url }: { icon: React.ReactNode, title: string, subtitle: string, brandColor?: string, url?: string }) {
   const [hovered, setHovered] = useState(false);
+  const [scrambleTick, setScrambleTick] = useState(0);
 
   const hoverStyle = hovered ? {
     borderColor: `${brandColor}90`,
@@ -687,13 +862,24 @@ function TechCard({ icon, title, subtitle, brandColor = '#00DBE9', url }: { icon
     url && "cursor-pointer"
   );
 
+  const handleMouseEnter = () => {
+    setHovered(true);
+    setScrambleTick((value) => value + 1);
+  };
+
+  const handleMouseLeave = () => setHovered(false);
+
   const content = (
     <>
       <div className="group-hover:scale-110 transition-transform flex items-center justify-center pl-1">
         {icon}
       </div>
       <div className="flex flex-col justify-center">
-        <div className="font-headline text-[10px] font-bold uppercase tracking-widest text-white leading-tight mb-0.5">{title}</div>
+        <DecryptText
+          text={title}
+          trigger={scrambleTick}
+          className="font-headline text-[10px] font-bold uppercase tracking-widest text-white leading-tight mb-0.5 block"
+        />
         <div className="font-mono text-[8px] text-outline uppercase tracking-wider leading-tight">{subtitle}</div>
       </div>
     </>
@@ -707,8 +893,8 @@ function TechCard({ icon, title, subtitle, brandColor = '#00DBE9', url }: { icon
         rel="noopener noreferrer"
         className={baseClass}
         style={hoverStyle}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         {content}
       </a>
@@ -719,8 +905,8 @@ function TechCard({ icon, title, subtitle, brandColor = '#00DBE9', url }: { icon
     <div
       className={baseClass}
       style={hoverStyle}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {content}
     </div>
@@ -886,7 +1072,8 @@ function ProjectsSection() {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="mb-10 md:mb-12 border-l-4 border-primary pl-4 sm:pl-6">
             <h1 className="font-headline text-4xl md:text-5xl font-black tracking-tight text-white mb-2 uppercase text-glow-cyan">
-              SECTOR_X: <span className="text-primary italic">PROJECT_LOGS</span>
+              SECTOR_X:{' '}
+              <DecryptText text="PROJECT_LOGS" runOnMount className="text-primary italic" />
             </h1>
           </div>
 
@@ -1036,7 +1223,8 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
           <div className="relative">
             <span className="font-mono text-[11px] font-bold text-primary tracking-[0.4em] uppercase block mb-3">// MAPMYINDIA_INTERNAL_LOG</span>
             <h1 className="font-headline text-4xl md:text-5xl font-black tracking-tight text-white mb-2 uppercase text-glow-cyan">
-              SECTOR_X: <span className="text-primary italic">CAREER HISTORY</span>
+              SECTOR_X:{' '}
+              <DecryptText text="CAREER HISTORY" runOnMount className="text-primary italic" />
             </h1>
             <div className="absolute -left-4 top-0 w-1 h-full bg-primary" />
           </div>
@@ -1094,7 +1282,8 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
           <div className="mb-10 md:mb-12 border-l-4 border-tertiary pl-4 sm:pl-6">
             <span className="font-mono text-[11px] font-bold text-tertiary tracking-[0.4em] uppercase block mb-3">// NEURAL_TRAINING_FACILITY</span>
             <h2 className="font-headline text-3xl md:text-5xl font-black tracking-tight text-white mb-2 uppercase text-glow-magenta">
-              ACADEMIC <span className="text-tertiary italic">ARCHIVES</span>
+              <DecryptText text="ACADEMIC" runOnMount className="text-white" />{' '}
+              <DecryptText text="ARCHIVES" runOnMount className="text-tertiary italic" />
             </h2>
           </div>
 
@@ -1127,13 +1316,15 @@ function ExperienceSection({ onOpenContact }: { key?: string, onOpenContact?: ()
             <h4 className="font-headline text-2xl sm:text-3xl font-bold mb-4 uppercase">Initialize Protocol?</h4>
             <p className="font-body text-sm text-on-surface-variant mb-8 px-0 sm:px-6 md:px-12">Requesting full neural dossier access for the corporate recruitment protocol. Secure channel established.</p>
             <div className="flex flex-col md:flex-row gap-4 justify-center">
-              <a
-                href={resumePDF}
-                download="Muskan_Kumari_Frontend_Resume.pdf"
-                className="bg-primary text-background px-8 py-4 font-headline font-black text-sm uppercase tracking-widest hover:shadow-glow-cyan transition-all inline-block"
-              >
-                DOWNLOAD_RESUME.EXE
-              </a>
+              <MagneticCTA className="w-full md:w-auto" radius={170} strength={14}>
+                <a
+                  href={resumePDF}
+                  download="Muskan_Kumari_Frontend_Resume.pdf"
+                  className="bg-primary text-background px-8 py-4 font-headline font-black text-sm uppercase tracking-widest hover:shadow-glow-cyan transition-all inline-block w-full md:w-auto"
+                >
+                  DOWNLOAD_RESUME.EXE
+                </a>
+              </MagneticCTA>
               <button
                 onClick={() => onOpenContact && onOpenContact()}
                 className="border border-primary text-primary px-8 py-4 font-headline font-black text-sm uppercase tracking-widest hover:bg-primary/10 transition-all">
@@ -1392,16 +1583,18 @@ function ContactModal({ onClose }: { onClose: () => void }) {
               )}
 
               <div className="pt-4 mt-8">
-                <button
-                  type="submit"
-                  disabled={status === 'sending'}
-                  className="group relative w-full py-4 bg-primary text-[#00363a] font-headline font-black text-sm sm:text-lg tracking-[0.18em] sm:tracking-[0.3em] overflow-hidden hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  <span className="relative z-10 block group-hover:scale-105 transition-transform duration-300">
-                    {status === 'sending' ? 'TRANSMITTING...' : 'INITIATE_UPLINK'}
-                  </span>
-                  <div className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
-                </button>
+                <MagneticCTA className="block w-full" radius={180} strength={16}>
+                  <button
+                    type="submit"
+                    disabled={status === 'sending'}
+                    className="group relative w-full py-4 bg-primary text-[#00363a] font-headline font-black text-sm sm:text-lg tracking-[0.18em] sm:tracking-[0.3em] overflow-hidden hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    <span className="relative z-10 block group-hover:scale-105 transition-transform duration-300">
+                      {status === 'sending' ? 'TRANSMITTING...' : 'INITIATE_UPLINK'}
+                    </span>
+                    <div className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
+                  </button>
+                </MagneticCTA>
               </div>
             </form>
           )}
