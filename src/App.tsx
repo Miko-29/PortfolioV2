@@ -788,6 +788,7 @@ function AboutSection() {
 
                 <TechCard url="https://react.dev/" icon={<SiReact size={20} color="#61DAFB" />} title="REACT" subtitle="Library" brandColor="#61DAFB" />
                 <TechCard url="https://ionicframework.com/" icon={<SiIonic size={20} color="#3880FF" />} title="IONIC" subtitle="Hybrid" brandColor="#3880FF" />
+                <TechCard url="https://spring.io/projects/spring-boot" icon={<FaJava size={20} color="#6DB33F" />} title="SPRINGBOOT" subtitle="Framework" brandColor="#6DB33F" />
                 <TechCard url="https://rxjs.dev/" icon={<SiReactivex size={20} color="#B7178C" />} title="RXJS" subtitle="Streams" brandColor="#B7178C" />
 
                 <TechCard url="https://ngrx.io/" icon={<Share2 size={20} color="#00DBE9" />} title="NGRX" subtitle="State" brandColor="#00DBE9" />
@@ -878,7 +879,7 @@ function TechCard({ icon, title, subtitle, brandColor = '#00DBE9', url }: { icon
         <DecryptText
           text={title}
           trigger={scrambleTick}
-          className="font-headline text-[10px] font-bold uppercase tracking-widest text-white leading-tight mb-0.5 block"
+          className="font-headline text-[10px] font-bold uppercase tracking-widest text-white leading-tight mb-0.5 block h-[1.1rem] whitespace-nowrap overflow-hidden"
         />
         <div className="font-mono text-[8px] text-outline uppercase tracking-wider leading-tight">{subtitle}</div>
       </div>
